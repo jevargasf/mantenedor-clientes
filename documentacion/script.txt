@@ -1,0 +1,38 @@
+create table perfiles(
+	id_per int primary key auto_increment,
+    nom_per varchar(50)
+);
+
+create table sucursales(
+	id_suc int primary key auto_increment,
+    nom_suc varchar(100),
+    dir_suc varchar(200),
+    fec_con date
+);
+
+create table usuarios(
+	id_usu int primary key auto_increment,
+	nom_usu varchar(50),
+	con_usu varchar(100),
+    id_per int,
+    foreign key(id_per) references perfiles(id_per)
+);
+
+create table clientes(
+	id_cli int primary key auto_increment,
+	rut_cli varchar(9),
+    nom_cli varchar(50),
+    ap_pat varchar(50),
+    ap_mat varchar(50),
+    eda_cli int,
+    tel_cli varchar(9),
+    pag_cli varchar(10)
+);
+
+create table nub(
+	id_nub int primary key auto_increment,
+    id_cli int,
+    id_suc int,
+    foreign key(id_cli) references clientes(id_cli),
+    foreign key(id_suc) references sucursales(id_suc)
+);
