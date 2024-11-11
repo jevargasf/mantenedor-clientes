@@ -1,7 +1,7 @@
-from controlador.funciones import Menu
+from controlador.funciones import Funciones
 
 class Principal():
-    __menu = Menu()
+    __menu = Funciones()
 
     def __init__(self):        
         pass

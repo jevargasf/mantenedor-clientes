@@ -18,12 +18,12 @@ class DAO():
                 host = "localhost",
                 user = "root",
                 password = "",
-                db = "p2_bd"
+                db = "bd_gestion"
             )
             self.cursor = self.connection.cursor()
             
-            print("Conexión a la base de datos establecida correctamente.")
-            self.pause()
+            #print("Conexión a la base de datos establecida correctamente.")
+            #self.pause()
         except:
             print("Error en DAO: Error en la conexión a la base de datos.")
             self.pause()
@@ -59,6 +59,18 @@ class DAO():
             print("Error en DAO: Error al consultar registro de clientes.")
             self.pause()
 
+    def comprobarRutCliente(self, rut):
+        try:
+            sql = "select rut_cli from clientes where rut_cli=%s"
+            self.__conectar()
+            self.cursor.execute(sql, rut)
+            response = self.cursor.fetchone()
+            self.__desconectar()
+            return response
+        except:
+            print("Error en DAO: Error al consultar RUT cliente.")
+            self.pause()
+
 # CRUD Sucursales
     def agregarSucursal(self, suc: Sucursal):
         try:
@@ -85,7 +97,10 @@ class DAO():
         except:
             print("Error en DAO: Error al consultar registro de sucursales.\n")
             self.pause()
-    
+
+    def comprobarSucursal(self):
+        pass
+
 # CRUD Asignaciones
     def asignarCliente(self, asig: ClienteSucursal):
         try:

@@ -6,7 +6,7 @@ from os import system
 from datetime import date
 
 
-class Menu():
+class Funciones():
     cliente = Cliente()
     sucursal = Sucursal()
     cliente_sucursal = ClienteSucursal()
@@ -155,7 +155,6 @@ class Menu():
 
 # Administración de clientes
     def registrarCliente(self):
-        # Pedir datos
         while True:
             try:
                 rut = input("Ingrese RUT del cliente sin puntos ni guión:\n")
@@ -169,6 +168,15 @@ class Menu():
                     break
             except:
                 print("Error: Por favor, ingrese un rut válido.")
+
+        if self.d.comprobarRutCliente(rut) is not None:
+            print("Error: El RUT ingresado ya está registrado. Por favor, intente nuevamente.")
+            self.pause()
+            self.menuClientes()
+        else:
+            self.pause()
+            print("El RUT del cliente es válido.")
+
 
         while True:
             try:
@@ -242,7 +250,7 @@ class Menu():
             forma_pago = "Débito"
         elif forma_pago == 3:
             forma_pago = "Crédito"
-        
+    
         self.cliente.setRut(rut)
         self.cliente.setNombre(nombre)
         self.cliente.setApPaterno(ap_pat)
@@ -251,6 +259,10 @@ class Menu():
         self.cliente.setEdad(edad)
         self.cliente.setFormaPago(forma_pago)
         self.d.agregarCliente(self.cliente)
+        
+        self.pause()
+        self.menuClientes()
+
 
     def verClientes(self):
         respuesta = self.d.listarClientes()
@@ -265,8 +277,15 @@ class Menu():
             print(f"Teléfono: +56{cliente[5]}")
             print(f"Forma de pago: {cliente[6]}\n")
 
+        self.pause()
+        self.menuClientes()
+
     def buscarCliente(self):
-        pass
+        rut = input("Ingrese rut del cliente sin puntos ni guión Ej: 112223334: ")
+        # Validar rut
+        respuesta = self.d.consultarCliente(rut)
+        self.pause()
+        self.menuClientes()
 
     def modificarCliente(self):
         pass
