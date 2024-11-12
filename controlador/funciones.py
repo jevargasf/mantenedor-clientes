@@ -4,6 +4,7 @@ from clases.gestion.cliente_sucursal import ClienteSucursal
 from bbdd.DAO import DAO
 from os import system
 from datetime import date
+import re
 
 
 class Funciones():
@@ -157,10 +158,17 @@ class Funciones():
     def registrarCliente(self):
         while True:
             try:
-                rut = input("Ingrese RUT del cliente sin puntos ni guión:\n")
-                if len(rut) > 9:
+                rut = input("Ingrese RUT del cliente con puntos y con guión. Ej: 11.111.111-1:\n")
+                if rut.find(".") != -1:
+                    rut_string = rut.replace(".", "")
+                    rut_lista = rut_string.split("-")
+                    rut_sin_digito = rut_lista[0]
+                    digito_verificador = rut_lista[1]
+                # Calcular módulo 11
+                # Verificar módulo 11 ingresado
+                if len(rut) > 12:
                     print("Error: Por favor, ingrese el RUT en el formato solicitado.")
-                elif len(rut) < 8:
+                elif len(rut) < 11:
                     print("Error: Por favor, ingrese un RUT válido.")
                 elif len(rut) == 0:
                     print("Error: El campo RUT no puede quedar vacío.")
@@ -410,3 +418,5 @@ class Funciones():
 
     def eliminarAsignacion(self):
         pass
+
+
