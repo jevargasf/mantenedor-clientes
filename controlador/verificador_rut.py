@@ -1,6 +1,6 @@
 # Pruebas
 
-rut = input("Ingrese RUT del cliente sin puntos ni guión:\n")
+rut = input("Ingrese RUT del cliente. Ej: 11.111.111-1:\n")
 if rut.find(".") != -1:
     rut_string = rut.replace(".", "")
     rut_lista = rut_string.split("-")
