@@ -1,12 +1,10 @@
 Próximos pasos:
 
 - Dejar funcional la P2
-	- arreglar validación rut
+	- modularizar validaciones
 	- validar nueva sucursal(confirmar si sucursal existe)
 	- validar asignación(confirmar si asignación existe)
-	- Menús
 	- Get por ID
-	- Comprobar registro existente antes de escribir
 	- Formatear datos en interfaz con beautifultable
 
 - Editar y eliminar registros

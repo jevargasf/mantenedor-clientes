@@ -4,7 +4,7 @@ from clases.gestion.cliente_sucursal import ClienteSucursal
 from bbdd.DAO import DAO
 from os import system
 from datetime import date
-import re
+import controlador.validaRut as validaRut
 
 
 class Funciones():
@@ -142,7 +142,7 @@ class Funciones():
                 print("Error: Ingrese una opción válida.")
                 self.pause()
 
-    def salir():
+    def salir(self):
         pass
 
 
@@ -158,33 +158,18 @@ class Funciones():
     def registrarCliente(self):
         while True:
             try:
-                rut = input("Ingrese RUT del cliente con puntos y con guión. Ej: 11.111.111-1:\n")
-                if rut.find(".") != -1:
-                    rut_string = rut.replace(".", "")
-                    rut_lista = rut_string.split("-")
-                    rut_sin_digito = rut_lista[0]
-                    digito_verificador = rut_lista[1]
-                # Calcular módulo 11
-                # Verificar módulo 11 ingresado
-                if len(rut) > 12:
-                    print("Error: Por favor, ingrese el RUT en el formato solicitado.")
-                elif len(rut) < 11:
-                    print("Error: Por favor, ingrese un RUT válido.")
-                elif len(rut) == 0:
-                    print("Error: El campo RUT no puede quedar vacío.")
-                else:
+                rut = input("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n")
+                if validaRut.valida(rut) == True:
                     break
+                else:
+                    print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
             except:
-                print("Error: Por favor, ingrese un rut válido.")
+                print("Error: Por favor, ingrese un rut válido.\n")
 
         if self.d.comprobarRutCliente(rut) is not None:
-            print("Error: El RUT ingresado ya está registrado. Por favor, intente nuevamente.")
+            print("Error: El RUT ingresado ya está registrado. Por favor, intente nuevamente.\n")
             self.pause()
             self.menuClientes()
-        else:
-            self.pause()
-            print("El RUT del cliente es válido.")
-
 
         while True:
             try:
@@ -288,12 +273,22 @@ class Funciones():
         self.pause()
         self.menuClientes()
 
+# Aquí estoy
     def buscarCliente(self):
-        rut = input("Ingrese rut del cliente sin puntos ni guión Ej: 112223334: ")
-        # Validar rut
-        respuesta = self.d.consultarCliente(rut)
-        self.pause()
-        self.menuClientes()
+        rut = input("Ingrese rut del cliente que desea buscar con puntos y guión Ej: 11.222.333-4:\n")
+        if validaRut.valida(rut) == True:
+            if rut.find(".") != -1:
+                rut_sin_puntos = rut.replace(".", "")
+            if rut.find("-") != -1:
+                rut_sin_guion = rut_sin_puntos.replace("-", "")
+            respuesta = self.d.consultarCliente(rut_sin_guion)
+            print(respuesta)
+            self.pause()
+            self.menuClientes()
+        else:
+            self.pause()
+            print("Error: El RUT del cliente no es válido. Intente nuevamente.\n")
+
 
     def modificarCliente(self):
         pass

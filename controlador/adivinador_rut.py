@@ -19,13 +19,10 @@ for x, digito in enumerate(reversed(rut_sin_digito)):
 modulo_once = 11-suma%11
 if modulo_once < 10:
     digito_control = str(modulo_once)
-elif modulo_once == 0:
+    print(f"Tu dígito verificador es {digito_control}")
+elif modulo_once == 11:
     digito_control = '0'
+    print(f"Tu dígito verificador es {digito_control}")
 elif modulo_once == 10:
     digito_control = 'K'
-
-if digito_control == digito_verificador:
-    print(True)
-else:
-    print("Error: El RUT ingresado no es válido.")
-
+    print(f"Tu dígito verificador es {digito_control}")

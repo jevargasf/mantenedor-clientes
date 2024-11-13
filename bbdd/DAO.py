@@ -71,6 +71,18 @@ class DAO():
             print("Error en DAO: Error al consultar RUT cliente.")
             self.pause()
 
+    def consultarCliente(self, rut):
+        try:
+            sql = "select rut_cli, nom_cli, ap_pat, ap_mat, eda_cli, tel_cli, pag_cli from clientes where rut_cli=%s"
+            self.__conectar()
+            self.cursor.execute(sql, rut)
+            response = self.cursor.fetchone()
+            self.__desconectar()
+            return response
+        except:
+            print("Error en DAO: Error al consultar RUT cliente.")
+            self.pause()
+
 # CRUD Sucursales
     def agregarSucursal(self, suc: Sucursal):
         try:
