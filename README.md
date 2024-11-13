@@ -1,16 +1,13 @@
 Próximos pasos:
 
 - Dejar funcional la P2
-	- modularizar validaciones
-	- validar nueva sucursal(confirmar si sucursal existe)
-	- validar asignación(confirmar si asignación existe)
-	- Get por ID
 	- Formatear datos en interfaz con beautifultable
 
 - Editar y eliminar registros
+	- todos los registros de las tablas deben tener un true/false para identificar si están habilitados ("eliminados")
 
 - Menú login: 
 	- Encriptación de contraseña -> modificar modelo de bbdd
-	- Enmascarar contraseña en interfaz de usuario
+	- Enmascarar contraseña en interfaz de usuario: usar maskpass para usar asteriscos.
 
 - Menú API

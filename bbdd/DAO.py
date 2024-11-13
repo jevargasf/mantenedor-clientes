@@ -3,6 +3,7 @@ from clases.gestion.sucursal import Sucursal
 from clases.gestion.cliente_sucursal import ClienteSucursal
 from os import system
 import pymysql
+import controlador.consola as consola
 
 
 class DAO():
@@ -26,7 +27,7 @@ class DAO():
             #self.pause()
         except:
             print("Error en DAO: Error en la conexión a la base de datos.")
-            self.pause()
+            consola.pausa()
                     
     def __desconectar(self):
         self.connection.close()
@@ -41,10 +42,10 @@ class DAO():
             self.connection.commit()
             self.__desconectar()
             print("Cliente registrado exitosamente.\n")
-            self.pause()
+            consola.pausa()
         except:
             print("Error en DAO: Error al agregar nuevo registro de cliente.\n")
-            self.pause()
+            consola.pausa()
 
 
     def listarClientes(self):
@@ -57,7 +58,7 @@ class DAO():
             return response
         except:
             print("Error en DAO: Error al consultar registro de clientes.")
-            self.pause()
+            consola.pausa()
 
     def comprobarRutCliente(self, rut):
         try:
@@ -68,8 +69,8 @@ class DAO():
             self.__desconectar()
             return response
         except:
-            print("Error en DAO: Error al consultar RUT cliente.")
-            self.pause()
+            print("Error en DAO: Error al comprobar RUT cliente.")
+            consola.pausa()
 
     def consultarCliente(self, rut):
         try:
@@ -81,7 +82,24 @@ class DAO():
             return response
         except:
             print("Error en DAO: Error al consultar RUT cliente.")
-            self.pause()
+            consola.pausa()
+
+    def consultarIdCliente(self, rut):
+        try:
+            sql = "select id_cli from clientes where rut_cli=%s"
+            self.__conectar()
+            self.cursor.execute(sql, rut)
+            response = self.cursor.fetchone()
+            self.__desconectar()
+            return response
+        except:
+            print("Error en DAO: Error al consultar id de cliente.")
+
+    def editarCliente(self):
+        pass
+
+    def deshabilitarCliente(self):
+        pass
 
 # CRUD Sucursales
     def agregarSucursal(self, suc: Sucursal):
@@ -93,10 +111,10 @@ class DAO():
             self.connection.commit()
             self.__desconectar()
             print("Sucursal agregada exitosamente.\n")
-            self.pause()
+            consola.pausa()
         except:
             print("Error en DAO: Error al agregar nuevo registro de sucursal.\n")
-            self.pause()
+            consola.pausa()
 
     def listarSucursales(self):
         try:
@@ -108,9 +126,47 @@ class DAO():
             return response
         except:
             print("Error en DAO: Error al consultar registro de sucursales.\n")
-            self.pause()
+            consola.pausa()
 
-    def comprobarSucursal(self):
+    def comprobarNombreSucursal(self, nombre):
+        try:
+            sql = "select nom_suc from sucursales where nom_suc=%s"
+            self.__conectar()
+            self.cursor.execute(sql, nombre)
+            response = self.cursor.fetchone()
+            self.__desconectar()
+            return response
+        except:
+            print("Error en DAO: Error al comprobar nombre sucursal.")
+            consola.pausa()
+
+    def consultarSucursal(self, nombre):
+        try:
+            sql = "select nom_suc, dir_suc, fec_con from sucursales where nom_suc=%s"
+            self.__conectar()
+            self.cursor.execute(sql, nombre)
+            response = self.cursor.fetchone()
+            self.__desconectar()
+            return response
+        except:
+            print("Error en DAO: Error al consultar sucursal.")
+            consola.pausa()
+
+    def consultarIdSucursal(self, nombre):
+        try:
+            sql = "select id_suc from sucursales where nom_suc=%s"
+            self.__conectar()
+            self.cursor.execute(sql, nombre)
+            response = self.cursor.fetchone()
+            self.__desconectar()
+            return response
+        except:
+            print("Error en DAO: Error al consultar id de sucursal.")
+
+    def editarSucursal(self):
+        pass
+
+    def deshabilitarSucursal(self):
         pass
 
 # CRUD Asignaciones
@@ -123,10 +179,23 @@ class DAO():
             self.connection.commit()
             self.__desconectar()
             print("Cliente asignado exitosamente.\n")
+            consola.pausa()
         except:
             print("Error en DAO: Error al asignar cliente a sucursal.\n")
-            self.pause()
+            consola.pausa()
 
+    def comprobarAsignacion(self, id_cli):
+        try:
+            sql = "select id_nub from nub where id_cli=%s"
+            self.__conectar()
+            self.cursor.execute(sql, id_cli)
+            response = self.cursor.fetchone()
+            self.__desconectar()
+            return response
+        except:
+            print("Error en DAO: Error al consultar asignación.\n")
+            consola.pausa()
+            
     def listarAsignaciones(self):
         try:
             sql = "select clientes.nom_cli, sucursales.nom_suc from nub inner join clientes on nub.id_cli = clientes.id_cli inner join sucursales on nub.id_suc = sucursales.id_suc"
@@ -137,4 +206,10 @@ class DAO():
             return response
         except:
             print("Error en DAO: Error al consultar registro de asignaciones.\n")
-            self.pause()
+            consola.pausa()
+
+    def editarAsignacion(self):
+        pass
+
+    def deshabilitarAsignacion(self):
+        pass

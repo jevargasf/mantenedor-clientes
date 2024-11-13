@@ -17,9 +17,6 @@ class Funciones():
     def __init__(self):
         pass
 
-    def pause(self):
-        system("read -p 'Presione una tecla para continuar...'")
-
 # Navegación
     def menuInicio(self):
         op = validadores.validaInt("Ingrese una opción:\n1. Iniciar Sesión\n2. Salir\n", 1, 2, "Error: Ingrese un valor numérico.", "Error de rango: Ingrese una de las opciones válidas.")
@@ -198,35 +195,13 @@ class Funciones():
 
 # Administración de sucursales
     def registrarSucursal(self):
-        while True:
-            try:
-                nom_suc = input("Ingrese nombre de la sucursal:\n")
-                if 0 > len(nom_suc):
-                    print("Error: Nombre de sucursal no puede quedar vacío. Por favor, ingrese un nombre.\n")
-                    self.pause()
-                elif len(nom_suc) > 100:
-                    print("Error: El nombre de la sucursal no puede superar los 100 caracteres.")
-                    self.pause()
-                else:
-                    break
-            except:
-                print("Error: Por favor, ingrese un nombre válido.")
-                self.pause()
+        nom_suc = validadores.validaString("Ingrese nombre de la sucursal:\n", 1, 100, "Error: Nombre de sucursal debe tener entre 1 y 100. Por favor, ingrese nuevamente.\n", "Error: El nombre de la sucursal no puede superar los 100 caracteres.")
+        if self.d.comprobarNombreSucursal(nom_suc) is not None:
+            print("Error: El nombre de la sucursal ya existe. Por favor, intente nuevamente.")
+            consola.pausa()
+            self.menuSucursales()
 
-        while True:
-            try:
-                dir_suc = input("Ingrese la dirección de la sucursal:\n")
-                if len(dir_suc) < 0:
-                    print("Error: Dirección de la sucursal no puede quedar vacía. Por favor, ingrese una dirección.\n")
-                    self.pause()
-                elif len(dir_suc) > 200:
-                    print("Error: La dirección de la sucursal no puede superar los 200 caracteres.\n")
-                    self.pause()
-                else:
-                    break
-            except:
-                print("Error: Por favor, ingrese una dirección válida.\n")
-                self.pause()
+        dir_suc = validadores.validaString("Ingrese la dirección de la sucursal:\n", 1, 200, "Error: Nombre de sucursal debe tener entre 1 y 100. Por favor, ingrese nuevamente.\n", "Error: Por favor, ingrese una dirección válida.\n")
 
         while True:
             try:
@@ -236,10 +211,10 @@ class Funciones():
                 ano_actual = date.today()
                 if ano_con > int(ano_actual.strftime("%Y")):
                     print("Error: El año no puede ser mayor a la fecha actual. Por favor, ingrese un año válido.")
-                    self.pause()
+                    consola.pausa()
                 elif ano_con < 1992:
                     print("Error: El año de constitución de la sucursal no puede ser menor al año de constitución de la empresa.")
-                    self.pause()
+                    consola.pausa()
                 elif date(ano_con, mes_con, dia_con):
                     print("Fecha válida.")
                     break
@@ -247,13 +222,15 @@ class Funciones():
                     print("Error: Ingrese una fecha válida.")
             except:
                 print("Error: Por favor, ingrese una fecha válida. Ejemplo: 2024-2-20.")
-                self.pause()
+                consola.pausa()
 
         fec_con = date(ano_con, mes_con, dia_con)
         self.sucursal.setNombre(nom_suc)
         self.sucursal.setDireccion(dir_suc)
         self.sucursal.setFechaConstitucion(fec_con)
         self.d.agregarSucursal(self.sucursal)
+
+        self.menuSucursales()
 
     def verSucursales(self):
         response = self.d.listarSucursales()
@@ -264,10 +241,19 @@ class Funciones():
             print(f"Dirección: {sucursal[1]}")
             print(f"Fecha constitución: {sucursal[2]}\n")
 
-
+        consola.pausa()
+        self.menuSucursales()
 
     def buscarSucursal(self):
-        pass
+        nom_suc = validadores.validaString("Ingrese nombre de la sucursal:\n", 1, 100, "Error: Nombre de sucursal debe tener entre 1 y 100. Por favor, ingrese nuevamente.\n", "Error: El nombre de la sucursal no puede superar los 100 caracteres.")
+        respuesta = self.d.consultarSucursal(nom_suc)
+
+        print(f"---- Datos sucursal ----\n")
+        print(f"Nombre sucursal:{respuesta[0]}")
+        print(f"Dirección: {respuesta[1]}")
+        print(f"Fecha de constitución: {respuesta[2]}")
+        
+        self.menuSucursales()
 
     def modificarSucursal(self):
         pass
@@ -277,36 +263,58 @@ class Funciones():
 
 # Administración de asignaciones
     def asignarCliente(self):
+        rut = validadores.validaString("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n", 11, 12, "Error: Por favor, ingrese RUT con puntos y guión.\n", "Error: Por favor, ingrese RUT con puntos y guión.")
         while True:
             try:
-                id_cli = int(input("Ingrese id del cliente que desea asignar:\n"))
-                if id_cli > 0:
+                if validaRut.valida(rut) == True:
                     break
                 else:
-                    print("Error: Por favor, ingrese un id válido.")
+                    print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
             except:
-                print("Error: Por favor, ingrese un id en formato numérico.")
+                print("Error: Por favor, ingrese un rut válido.\n")
 
-        while True:
-            try:
-                id_suc = int(input("Ingrese id de la sucursal que desea asignar al cliente:\n"))
-                if id_suc > 0:
-                    break
-                else:
-                    print("Error: Por favor, ingrese un id válido.")
-            except:
-                print("Error: Por favor, ingrese un id en formato numérico.")
+        
+        rut_sin_puntos = rut.replace(".", "")
+        rut_sin_guion = rut_sin_puntos.replace("-","")
+        if self.d.comprobarRutCliente(rut_sin_guion) is None:
+            print("Error: El RUT ingresado no existe. Por favor, intente nuevamente.\n")
+            consola.pausa()
+            self.menuAsignaciones()
 
+        # Comprobar si cliente ya está asignado a sucursal
+        if self.d.comprobarAsignacion(id_cli) is not None:
+            print("Error: El cliente ya tiene una sucursal asignada. Por favor, intente nuevamente con otro cliente.\n")
+            consola.pausa()
+            self.menuAsignaciones()
+
+        nom_suc = validadores.validaString("Ingrese nombre de la sucursal:\n", 1, 100, "Error: Nombre de sucursal debe tener entre 1 y 100. Por favor, ingrese nuevamente.\n", "Error: El nombre de la sucursal no puede superar los 100 caracteres.")
+        if self.d.comprobarNombreSucursal(nom_suc) is None:
+            print("Error: El nombre de la sucursal no existe. Por favor, intente nuevamente.")
+            consola.pausa()
+            self.menuAsignaciones()
+
+        # Buscar id cliente por rut
+        respuesta_cli = self.d.consultarIdCliente(rut_sin_guion)
+        id_cli = respuesta_cli[0]
+        # Buscar id sucursal por nombre
+        respuesta_suc = self.d.consultarIdSucursal(nom_suc)
+        id_suc = respuesta_suc[0]
+
+        # Crear asignación 
         self.cliente_sucursal.cliente.setId(id_cli)
         self.cliente_sucursal.sucursal.setid(id_suc)
         self.d.asignarCliente(self.cliente_sucursal)
+        
+        self.menuAsignaciones()
 
     def verAsignaciones(self):
         response = self.d.listarAsignaciones()
         for x, asignaciones in enumerate(response):
             print(f"---- Asignación {x+1} ----\n")
             print(f"Cliente: {asignaciones[0]}")
-            print(f"Sucursal: {asignaciones[1]}")
+            print(f"Sucursal: {asignaciones[1]}\n")
+
+        self.menuAsignaciones()
 
     def modificarAsignacion(self):
         pass
