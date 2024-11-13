@@ -5,6 +5,7 @@ from bbdd.DAO import DAO
 from os import system
 from datetime import date
 import controlador.validaRut as validaRut
+import controlador.validadores as validadores
 
 
 class Funciones():
@@ -21,17 +22,7 @@ class Funciones():
 
 # Navegación
     def menuInicio(self):
-        while True:
-            try:
-                op = int(input("Ingrese una opción:\n1. Iniciar Sesión\n2. Salir\n"))
-                if op == 1 or op == 2:
-                    break
-                else:
-                    print("Error de rango: Ingrese una de las opciones válidas.")
-                    self.pause()
-            except:
-                print("Error de tipo: Ingrese un valor numérico.")
-                self.pause()
+        op = validadores.validaInt("Ingrese una opción:\n1. Iniciar Sesión\n2. Salir\n", 1, 2, "Error: Ingrese un valor numérico.", "Error de rango: Ingrese una de las opciones válidas.")
 
         if op == 1:
             self.menuPrincipal()
@@ -39,16 +30,7 @@ class Funciones():
             self.salir()
         
     def menuPrincipal(self):
-        while True:
-            try:
-                op = int(input("¿Qué desea hacer?\n1. Administrar clientes\n2. Administrar sucursales\n3. Administrar asignaciones\n4. Estadísticas\n5. Cerrar sesión\n"))
-                if 1 <= op <= 5:
-                    break
-                else:
-                    print("Error: Ingrese una de las opciones válidas.")
-            except:
-                print("Error: Ingrese un valor numérico.")
-                self.pause()
+        op = validadores.validaInt("¿Qué desea hacer?\n1. Administrar clientes\n2. Administrar sucursales\n3. Administrar asignaciones\n4. Estadísticas\n5. Cerrar sesión\n", 1, 5, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese un valor numérico.")
 
         if op == 1:
             self.menuClientes()
@@ -62,16 +44,7 @@ class Funciones():
             self.cerrarSesion()
 
     def menuClientes(self):
-        while True:
-            try:
-                op = int(input("¿Qué desea hacer?\n1. Registrar cliente\n2. Ver clientes\n3. Buscar cliente\n4. Modificar cliente\n5. Eliminar cliente\n6. Volver\n"))
-                if 1 <= op <= 6:
-                    break
-                else:
-                    print("Error: Ingrese una de las opciones válidas.")
-            except:
-                print("Error: Ingrese una opción válida.")
-                self.pause()
+        op = validadores.validaInt("¿Qué desea hacer?\n1. Registrar cliente\n2. Ver clientes\n3. Buscar cliente\n4. Modificar cliente\n5. Eliminar cliente\n6. Volver\n", 1, 6, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese una opción válida.")
 
         if op == 1:
             self.registrarCliente()
