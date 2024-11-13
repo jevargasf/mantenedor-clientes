@@ -13,7 +13,7 @@ def pausa():
 
 def borrar():
     os_string = platform.platform()
-    if os_string[0] == 'm':
+    if os_string[0] == 'm' or os_string[0] == 'l':
         system("clear")
-    elif os_string[0] == 'w':
+    elif os_string[0] == 'w' or os_string[0] == 'W':
         system("cls")

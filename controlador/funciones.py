@@ -6,7 +6,7 @@ from os import system
 from datetime import date
 import controlador.validaRut as validaRut
 import controlador.validadores as validadores
-
+import controlador.consola as consola
 
 class Funciones():
     cliente = Cliente()
@@ -60,16 +60,7 @@ class Funciones():
             self.menuPrincipal()
 
     def menuSucursales(self):
-        while True:
-            try:
-                op = int(input("¿Qué desea hacer?\n1. Registrar sucursal\n2. Ver sucursales\n3. Buscar sucursal\n4. Modificar sucursal\n5. Eliminar sucursal\n6. Volver\n"))
-                if 1 <= op <= 6:
-                    break
-                else:
-                    print("Error: Ingrese una de las opciones válidas.")
-            except:
-                print("Error: Ingrese una opción válida.")
-                self.pause()
+        op = validadores.validaInt("¿Qué desea hacer?\n1. Registrar sucursal\n2. Ver sucursales\n3. Buscar sucursal\n4. Modificar sucursal\n5. Eliminar sucursal\n6. Volver\n", 1, 6, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese una opción válida.")
 
         if op == 1:
             self.registrarSucursal()
@@ -85,16 +76,7 @@ class Funciones():
             self.menuPrincipal()
     
     def menuAsignaciones(self):
-        while True:
-            try:
-                op = int(input("¿Qué desea hacer?\n1. Asignar cliente\n2. Ver asignaciones\n3. Modificar asignación\n4. Eliminar asignación\n5. Volver\n"))
-                if 1 <= op <= 5:
-                    break
-                else:
-                    print("Error: Ingrese una de las opciones válidas.")
-            except:
-                print("Error: Ingrese una opción válida.")
-                self.pause()
+        op = validadores.validaInt("¿Qué desea hacer?\n1. Asignar cliente\n2. Ver asignaciones\n3. Modificar asignación\n4. Eliminar asignación\n5. Volver\n", 1, 5, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese una opción válida.")
 
         if op == 1:
             self.asignarCliente()
@@ -108,12 +90,7 @@ class Funciones():
             self.menuPrincipal()
 
     def menuEstadísticas(self):
-        while True:
-            try:
-                op = int(input("¿Qué desea hacer?\n1. Opción 1\n2. Opción 2\n3. Opción 3\n4. Volver\n"))
-            except:
-                print("Error: Ingrese una opción válida.")
-                self.pause()
+        op = validadores.validaInt("¿Qué desea hacer?\n1. Opción 1\n2. Opción 2\n3. Opción 3\n4. Volver\n", 1, 4, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese una opción válida.")
 
     def salir(self):
         pass
@@ -129,6 +106,7 @@ class Funciones():
 
 # Administración de clientes
     def registrarCliente(self):
+        rut = validadores.validaString("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n", 11, 12, "Error: Por favor, ingrese RUT con puntos y guión.\n", "Error: Por favor, ingrese RUT con puntos y guión.")
         while True:
             try:
                 rut = input("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n")
@@ -141,74 +119,15 @@ class Funciones():
 
         if self.d.comprobarRutCliente(rut) is not None:
             print("Error: El RUT ingresado ya está registrado. Por favor, intente nuevamente.\n")
-            self.pause()
+            consola.pausa()
             self.menuClientes()
 
-        while True:
-            try:
-                nombre = input("Ingrese nombre del cliente:\n")
-                if len(nombre) < 1:
-                    print("Error: El campo nombre no puede quedar vacío.")
-                elif len(nombre) > 50:
-                    print("Error: El nombre no debe superar los 50 caracteres.")
-                else:
-                    break
-            except:
-                print("Error: Por favor, ingrese un nombre válido.")
-
-        while True:
-            try:
-                ap_pat = input("Ingrese apellido paterno del cliente:\n")
-                if len(ap_pat) < 1:
-                    print("Error: El campo apellido paterno no puede quedar vacío.")
-                elif len(ap_pat) > 50:
-                    print("Error: El apellido paterno no debe superar los 50 caracteres.")
-                else:
-                    break
-            except:  
-                print("Error: Por favor, ingrese un apellido paterno válido.")
-
-        while True:
-            try:
-                ap_mat = input("Ingrese apellido materno del cliente:\n")
-                if len(ap_mat) < 1:
-                    print("Error: El campo apellido materno no puede quedar vacío.")
-                elif len(ap_mat) > 50:
-                    print("Error: El apellido materno no debe superar los 50 caracteres.")
-                else:
-                    break
-            except:  
-                print("Error: Por favor, ingrese un apellido materno válido.")
-
-        while True:
-            try:
-                edad = int(input("Ingrese la edad del cliente:\n"))
-                if 0 < edad < 110:
-                    break
-                else:
-                    print("Error de rango: Ingrese una edad válida. Debe ser mayor que 0 y menor que 110.")
-            except:
-                print("Error de tipo: Ingrese la edad como un número.")
-        
-        while True:
-            try:
-                telefono = input("Ingrese número de teléfono del cliente. Ejemplo: 987654321\n")
-                if len(telefono) == 9:
-                    break
-                else:
-                    print("Error: Por favor, ingrese un número de teléfono de 9 dígitos.")
-            except:
-                print("Error: Por favor, ingrese un número de teléfono válido.")
-
-        while True:
-            try:
-                forma_pago = int(input("Ingrese forma de pago del cliente:\n1. Efectivo\n2. Débito\n3. Crédito\n"))
-                if forma_pago == 1 or forma_pago == 2 or forma_pago == 3:
-                    break
-                else:
-                    print("Error de rango: Por favor, ingrese una de las opciones del menú.")
-            except:
-                print("Error de tipo: Ingrese una opción numérica.")
+        nombre = validadores.validaString("Ingrese nombre del cliente:\n", 1, 50, "Error: El nombre debe tener entre 1 y 50 caracteres.", "Error: Por favor, ingrese un nombre válido.")
+        ap_pat = validadores.validaString("Ingrese apellido paterno del cliente:\n", 1, 50, "Error: El apellido paterno debe tener entre 1 y 50 caracteres.", "Error: Por favor, ingrese un apellido paterno válido.")
+        ap_mat = validadores.validaString("Ingrese apellido materno del cliente:\n", 1, 50, "Error: El apellido materno debe tener entre 1 y 50 caracteres.", "Error: Por favor, ingrese un apellido paterno válido.")
+        edad = validadores.validaInt("Ingrese la edad del cliente:\n", 1, 110, "Error de rango: Ingrese una edad válida. Debe ser mayor que 0 y menor que 110.", "Error de tipo: Ingrese la edad como un número.")
+        telefono = validadores.validaString("Ingrese número de teléfono del cliente. Ejemplo: 987654321\n", 9, 9, "Error: Por favor, ingrese un número de teléfono de 9 dígitos.", "Error: Por favor, ingrese un número de teléfono válido.")
+        forma_pago = validadores.validaString("Ingrese forma de pago del cliente:\n1. Efectivo\n2. Débito\n3. Crédito\n", 1, 3, "Error de rango: Por favor, ingrese una de las opciones del menú.", "Error de tipo: Ingrese una opción numérica.")
 
         if forma_pago == 1:
             forma_pago = "Efectivo"
@@ -226,7 +145,7 @@ class Funciones():
         self.cliente.setFormaPago(forma_pago)
         self.d.agregarCliente(self.cliente)
         
-        self.pause()
+        consola.pausa()
         self.menuClientes()
 
 
@@ -243,25 +162,33 @@ class Funciones():
             print(f"Teléfono: +56{cliente[5]}")
             print(f"Forma de pago: {cliente[6]}\n")
 
-        self.pause()
+        consola.pausa()
         self.menuClientes()
 
 # Aquí estoy
     def buscarCliente(self):
-        rut = input("Ingrese rut del cliente que desea buscar con puntos y guión Ej: 11.222.333-4:\n")
+        rut = validadores.validaString("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n", 11, 12, "Error: Por favor, ingrese RUT con puntos y guión.\n", "Error: Por favor, ingrese RUT con puntos y guión.")
         if validaRut.valida(rut) == True:
             if rut.find(".") != -1:
                 rut_sin_puntos = rut.replace(".", "")
             if rut.find("-") != -1:
                 rut_sin_guion = rut_sin_puntos.replace("-", "")
             respuesta = self.d.consultarCliente(rut_sin_guion)
-            print(respuesta)
-            self.pause()
-            self.menuClientes()
         else:
-            self.pause()
+            consola.pausa()
             print("Error: El RUT del cliente no es válido. Intente nuevamente.\n")
 
+        print(f"---- Datos cliente ----\n")
+        print(f"RUT:{respuesta[0]}")
+        print(f"Nombre: {respuesta[1]}")
+        print(f"Apellido paterno: {respuesta[2]}")
+        print(f"Apellido materno: {respuesta[3]}")
+        print(f"Edad: {respuesta[4]}")
+        print(f"Teléfono: +56{respuesta[5]}")
+        print(f"Forma de pago: {respuesta[6]}\n")
+
+        consola.pausa()
+        self.menuClientes()
 
     def modificarCliente(self):
         pass

@@ -1,17 +1,18 @@
 import controlador.consola as consola
 
-def validaSting(inst: str, min: int, max: int):
+def validaString(inst: str, min: int, max: int, err: str, exc: str):
     while True:
         try:
             op = input(inst)
-            if min < len(op) < max:
-                return op
+            if min <= len(op) <= max:
+                break
             else:
-                print("Error: Fuera de rango.")
+                print(err)
                 consola.pausa()
         except:
-            print("Error: Fuera de tipo.")
+            print(exc)
             consola.pausa()
+    return op
 
 def validaInt(inst: str, min: int, max: int, err: str, exc: str):
     while True:
