@@ -95,8 +95,39 @@ class DAO():
         except:
             print("Error en DAO: Error al consultar id de cliente.")
 
-    def editarCliente(self):
-        pass
+    def editarCliente(self, op, cli: Cliente):
+        try:
+            self.__conectar()
+            if op == 1:
+                values = (cli.getRut(), cli.getId())
+                sql = "update clientes set rut_cli=%s where id_cli=%s"
+            elif op == 2:
+                values = (cli.getNombre(), cli.getId())
+                sql = "update clientes set nom_cli=%s where id_cli=%s"
+            elif op == 3:
+                values = (cli.getApPaterno(), cli.getId())
+                sql = "update clientes set ap_pat=%s where id_cli=%s"
+            elif op == 4:
+                values = (cli.getApMaterno(), cli.getId())
+                sql = "update clientes set ap_mat=%s where id_cli=%s"
+            elif op == 5:
+                values = (cli.getEdad(), cli.getId())
+                sql = "update clientes set eda_cli=%s where id_cli=%s"
+            elif op == 6:
+                values = (cli.getTelefono(), cli.getId())
+                sql = "update clientes set tel_cli=%s where id_cli=%s"
+            elif op == 7:
+                values = (cli.getFormaPago(), cli.getId())
+                sql = "update clientes set pag_cli=%s where id_cli=%s"
+
+            self.cursor.execute(sql, values)
+            self.connection.commit()
+            self.__desconectar()
+            print("Cliente modificado exitosamente.")
+            consola.pausa()
+        except:
+            print("Error en DAO: Error al modificar cliente.")
+            consola.pausa()
 
     def deshabilitarCliente(self):
         pass

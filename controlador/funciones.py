@@ -162,7 +162,6 @@ class Funciones():
         consola.pausa()
         self.menuClientes()
 
-# Aquí estoy
     def buscarCliente(self):
         rut = validadores.validaString("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n", 11, 12, "Error: Por favor, ingrese RUT con puntos y guión.\n", "Error: Por favor, ingrese RUT con puntos y guión.")
         if validaRut.valida(rut) == True:
@@ -174,6 +173,7 @@ class Funciones():
         else:
             consola.pausa()
             print("Error: El RUT del cliente no es válido. Intente nuevamente.\n")
+            self.menuClientes()
 
         print(f"---- Datos cliente ----\n")
         print(f"RUT:{respuesta[0]}")
@@ -188,7 +188,80 @@ class Funciones():
         self.menuClientes()
 
     def modificarCliente(self):
-        pass
+        # ingrese rut de cliente que desea editar
+        # input de rut y comprobar cliente
+        rut = validadores.validaString("Ingrese RUT del cliente que desea modificar con puntos y guión. Ej: 11.111.111-1:\n", 11, 12, "Error: Por favor, ingrese RUT con puntos y guión.\n", "Error: Por favor, ingrese RUT con puntos y guión.")
+        if validaRut.valida(rut) == True:
+            if rut.find(".") != -1:
+                rut_sin_puntos = rut.replace(".", "")
+            if rut.find("-") != -1:
+                rut_sin_guion = rut_sin_puntos.replace("-", "")
+            comprobar_cliente = self.d.comprobarRutCliente(rut_sin_guion)
+            if comprobar_cliente is None:
+                print("Error: El RUT del cliente no existe. Por favor, intente nuevamente.")
+                self.menuClientes()
+            respuesta = self.d.consultarCliente(rut_sin_guion)
+        else:
+            consola.pausa()
+            print("Error: El RUT del cliente no es válido. Intente nuevamente.\n")
+            self.menuClientes()
+
+        print(f"---- Datos cliente ----\n")
+        print(f"1. RUT:{respuesta[0]}")
+        print(f"2. Nombre: {respuesta[1]}")
+        print(f"3. Apellido paterno: {respuesta[2]}")
+        print(f"4. Apellido materno: {respuesta[3]}")
+        print(f"5. Edad: {respuesta[4]}")
+        print(f"6. Teléfono: +56{respuesta[5]}")
+        print(f"7. Forma de pago: {respuesta[6]}\n")
+        op = validadores.validaInt("Ingrese la opción del campo que desea modificar:\n", 1, 7, "Error: Ingrese un valor de la lista.", "Error: Ingrese un valor numérico.")
+        # ingrese campo que desea editar (lista del 1 al 6?), con valor existente
+        # pedir datos cliente
+        if op == 1:
+            # validar nuevo rut
+            nuevo_rut = validadores.validaString("Ingrese nuevo RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n", 11, 12, "Error: Por favor, ingrese RUT con puntos y guión.\n", "Error: Por favor, ingrese RUT con puntos y guión.")
+            if validaRut.valida(nuevo_rut) == True:
+                # comprueba que no está registrado en la bbdd
+                nuevo_rut_sin_puntos = rut.replace(".", "")
+                nuevo_rut_sin_guion = nuevo_rut_sin_puntos.replace("-","")
+                if self.d.comprobarRutCliente(nuevo_rut_sin_guion) is not None:
+                    print("Error: El RUT ingresado ya está registrado en la base de datos. Intente nuevamente.\n")
+                    consola.pausa()
+                    self.menuClientes()
+                else:
+                    self.cliente.setRut(nuevo_rut_sin_guion)
+            else:
+                print("Error: El RUT del cliente no es válido. Intente nuevamente.\n")
+                consola.pausa()
+                self.menuClientes()
+        elif op == 2:
+            # validar nuevo valor
+            nuevo_nom = validadores.validaString("Ingrese nuevo nombre del cliente:\n", 1, 50, "Error: El nombre debe tener entre 1 y 50 caracteres.", "Error: Por favor, ingrese un nombre válido.")
+            self.cliente.setNombre(nuevo_nom)
+        elif op == 3:
+            nuevo_ap_pat = validadores.validaString("Ingrese nuevo apellido paterno del cliente:\n", 1, 50, "Error: El apellido paterno debe tener entre 1 y 50 caracteres.", "Error: Por favor, ingrese un apellido paterno válido.")
+            self.cliente.setApPaterno(nuevo_ap_pat)
+        elif op == 4:
+            nuevo_ap_mat = validadores.validaString("Ingrese nuevo apellido materno del cliente:\n", 1, 50, "Error: El apellido materno debe tener entre 1 y 50 caracteres.", "Error: Por favor, ingrese un apellido paterno válido.")
+            self.cliente.setApMaterno(nuevo_ap_mat)
+        elif op == 5:
+            nueva_edad = validadores.validaInt("Ingrese la nueva edad del cliente:\n", 1, 110, "Error de rango: Ingrese una edad válida. Debe ser mayor que 0 y menor que 110.", "Error de tipo: Ingrese la edad como un número.")
+            self.cliente.setEdad(nueva_edad)
+        elif op == 6:
+            nuevo_telefono = validadores.validaString("Ingrese nuevo número de teléfono del cliente. Ejemplo: 987654321\n", 9, 9, "Error: Por favor, ingrese un número de teléfono de 9 dígitos.", "Error: Por favor, ingrese un número de teléfono válido.")
+            self.cliente.setTelefono(nuevo_telefono)
+        elif op == 7:
+            nueva_forma_pago = validadores.validaString("Ingrese nueva forma de pago del cliente:\n1. Efectivo\n2. Débito\n3. Crédito\n", 1, 3, "Error de rango: Por favor, ingrese una de las opciones del menú.", "Error de tipo: Ingrese una opción numérica.")
+            self.cliente.setFormaPago(nueva_forma_pago)
+        
+        # identificar id de registro en tabla clientes
+        respuesta_id = self.d.consultarIdCliente(rut_sin_guion)
+        id_cli = respuesta_id[0]
+        self.cliente.setId(id_cli)
+        # realizar modificación en la tabla
+        self.d.editarCliente(op, self.cliente)
+        
+        # cancelar la operación en todo momento?
 
     def eliminarCliente(self):
         pass
@@ -273,7 +346,6 @@ class Funciones():
             except:
                 print("Error: Por favor, ingrese un rut válido.\n")
 
-        
         rut_sin_puntos = rut.replace(".", "")
         rut_sin_guion = rut_sin_puntos.replace("-","")
         if self.d.comprobarRutCliente(rut_sin_guion) is None:
