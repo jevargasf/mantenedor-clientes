@@ -336,10 +336,11 @@ class Funciones():
             consola.pausa()
             self.menuSucursales()
 
+        respuesta = self.d.consultarSucursal(nom_suc)
         print(f"---- Datos sucursal ----\n")
-        print(f"1. Nombre: {comprobar_sucursal[0]}")
-        print(f"2. Dirección: {comprobar_sucursal[1]}")
-        print(f"3. Fecha constitución: {comprobar_sucursal[2]}\n")
+        print(f"1. Nombre: {respuesta[0]}")
+        print(f"2. Dirección: {respuesta[1]}")
+        print(f"3. Fecha constitución: {respuesta[2]}\n")
 
         op = validadores.validaInt("Ingrese la opción del campo que desea modificar:\n", 1, 3, "Error: Ingrese un valor de la lista.", "Error: Ingrese un valor numérico.")
         if op == 1:
@@ -371,11 +372,13 @@ class Funciones():
                     consola.pausa()
             nueva_fec = date(nuevo_ano, nuevo_mes, nuevo_dia)
             self.sucursal.setFechaConstitucion(nueva_fec)
-            id_suc = self.d.consultarIdSucursal(nom_suc)
-            self.sucursal.setId(id_suc)
+        
+        respuesta_id_suc = self.d.consultarIdSucursal(nom_suc)
+        id_suc = respuesta_id_suc[0]
+        self.sucursal.setId(id_suc)
 
-            self.d.editarSucursal(op, self.sucursal)
-            self.menuSucursales()
+        self.d.editarSucursal(op, self.sucursal)
+        self.menuSucursales()
 
     def eliminarSucursal(self):
         pass
@@ -432,10 +435,46 @@ class Funciones():
             print(f"Cliente: {asignaciones[0]}")
             print(f"Sucursal: {asignaciones[1]}\n")
 
+        consola.pausa()
         self.menuAsignaciones()
 
     def modificarAsignacion(self):
-        pass
+        # elegir cliente al que se quiere cambiar asignación
+        rut = validadores.validaString("Ingrese RUT del cliente que desea modificar con puntos y guión. Ej: 11.111.111-1:\n", 11, 12, "Error: Por favor, ingrese RUT con puntos y guión.\n", "Error: Por favor, ingrese RUT con puntos y guión.")
+        if validaRut.valida(rut) == True:
+            if rut.find(".") != -1:
+                rut_sin_puntos = rut.replace(".", "")
+            if rut.find("-") != -1:
+                rut_sin_guion = rut_sin_puntos.replace("-", "")
+            comprobar_cliente = self.d.comprobarRutCliente(rut_sin_guion)
+            if comprobar_cliente is None:
+                print("Error: El RUT del cliente no existe. Por favor, intente nuevamente.")
+                self.menuClientes()
+            id_cli = self.d.consultarIdCliente(rut_sin_guion)
+        else:
+            consola.pausa()
+            print("Error: El RUT del cliente no es válido. Intente nuevamente.\n")
+            self.menuClientes()
+        
+        respuesta = self.d.consultarAsginacion(id_cli)
+        
+        # mostrar asginación actual
+        print("---- Asignación actual ----\n")
+        print(f"Cliente: {respuesta[0]}")
+        print(f"Sucursal: {respuesta[1]}\n")
+
+        # pedir nombre sucursal a la que se quiere cambiar
+        nom_suc = validadores.validaString("Ingrese nombre de la nueva sucursal a la que desea asignar al cliente:\n", 1, 100, "Error: Nombre de sucursal debe tener entre 1 y 100 caracteres. Por favor, ingrese nuevamente.\n", "Error: El nombre de la sucursal no puede superar los 100 caracteres.\n")
+        id_nueva_suc = self.d.consultarIdSucursal(nom_suc)
+        id_asig = self.d.comprobarAsignacion(id_cli)
+
+        self.cliente_sucursal.setId(id_asig)
+        self.cliente_sucursal.cliente.setId(id_cli)
+        self.cliente_sucursal.sucursal.setId(id_nueva_suc)
+        self.d.editarAsignacion(self.cliente_sucursal)
+
+        self.menuAsignaciones()
+        # generar edit asignación (nuevo id sucursal)
 
     def eliminarAsignacion(self):
         pass

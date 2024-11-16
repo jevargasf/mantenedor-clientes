@@ -196,6 +196,7 @@ class DAO():
 
     def editarSucursal(self, op, suc: Sucursal):
         try:
+            self.__conectar()
             if op == 1:
                 values = (suc.getNombre(), suc.getId())
                 sql = "update sucursales set nom_suc = %s where id_suc = %s"
@@ -256,8 +257,31 @@ class DAO():
             print("Error en DAO: Error al consultar registro de asignaciones.\n")
             consola.pausa()
 
-    def editarAsignacion(self):
-        pass
+    def consultarAsginacion(self, id_cli):
+        try:
+            sql = "select clientes.nom_cli, sucursales.nom_suc from nub inner join clientes on nub.id_cli = clientes.id_cli inner join sucursales on nub.id_suc = sucursales.id_suc where nub.id_cli = %s"
+            self.__conectar()
+            self.cursor.execute(sql, id_cli)
+            response = self.cursor.fetchone()
+            self.__desconectar
+            return response
+        except:
+            print("Error en DAO: Error al consultar asignación de cliente a sucursal.\n")
+            consola.pausa()
 
-    def deshabilitarAsignacion(self):
+    def editarAsignacion(self, asig: ClienteSucursal):
+        try:
+            sql = "update nub set id_cli = %s, id_suc = %s where id_nub = %s"
+            values = (asig.cliente.getId(), asig.sucursal.getId(), asig.getId())
+            self.__conectar()
+            self.cursor.execute(sql, values)
+            self.connection.commit()
+            self.__desconectar()
+            print("Asginación de cliente modificada exitosamente.\n")
+            consola.pausa()
+        except:
+            print("Error en DAO: Error al modificar la asignación de cliente a sucursal.")
+            consola.pausa()
+            
+    def borrarAsignacion(self):
         pass
