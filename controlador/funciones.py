@@ -145,7 +145,6 @@ class Funciones():
         consola.pausa()
         self.menuClientes()
 
-
     def verClientes(self):
         respuesta = self.d.listarClientes()
     
@@ -268,13 +267,13 @@ class Funciones():
 
 # Administración de sucursales
     def registrarSucursal(self):
-        nom_suc = validadores.validaString("Ingrese nombre de la sucursal:\n", 1, 100, "Error: Nombre de sucursal debe tener entre 1 y 100. Por favor, ingrese nuevamente.\n", "Error: El nombre de la sucursal no puede superar los 100 caracteres.")
+        nom_suc = validadores.validaString("Ingrese nombre de la sucursal:\n", 1, 100, "Error: Nombre de sucursal debe tener entre 1 y 100 caracteres. Por favor, ingrese nuevamente.\n", "Error: El nombre de la sucursal no puede superar los 100 caracteres.\n")
         if self.d.comprobarNombreSucursal(nom_suc) is not None:
             print("Error: El nombre de la sucursal ya existe. Por favor, intente nuevamente.")
             consola.pausa()
             self.menuSucursales()
 
-        dir_suc = validadores.validaString("Ingrese la dirección de la sucursal:\n", 1, 200, "Error: Nombre de sucursal debe tener entre 1 y 100. Por favor, ingrese nuevamente.\n", "Error: Por favor, ingrese una dirección válida.\n")
+        dir_suc = validadores.validaString("Ingrese la dirección de la sucursal:\n", 1, 200, "Error: Dirección de la sucursal debe tener entre 1 y 200 caracteres. Por favor, ingrese nuevamente.\n", "Error: Por favor, ingrese una dirección válida.\n")
 
         while True:
             try:
@@ -329,7 +328,54 @@ class Funciones():
         self.menuSucursales()
 
     def modificarSucursal(self):
-        pass
+        nom_suc = validadores.validaString("Ingrese nombre de la sucursal que desea modificar:\n", 1, 100, "Error: Nombre de sucursal debe tener entre 1 y 100. Por favor, ingrese nuevamente.\n", "Error: El nombre de la sucursal no puede superar los 100 caracteres.\n")
+        # comprobar sucursal
+        comprobar_sucursal = self.d.comprobarNombreSucursal(nom_suc)
+        if comprobar_sucursal is None:
+            print("Error: El nombre de la sucursal no existe. Por favor, intente nuevamente.\n")
+            consola.pausa()
+            self.menuSucursales()
+
+        print(f"---- Datos sucursal ----\n")
+        print(f"1. Nombre: {comprobar_sucursal[0]}")
+        print(f"2. Dirección: {comprobar_sucursal[1]}")
+        print(f"3. Fecha constitución: {comprobar_sucursal[2]}\n")
+
+        op = validadores.validaInt("Ingrese la opción del campo que desea modificar:\n", 1, 3, "Error: Ingrese un valor de la lista.", "Error: Ingrese un valor numérico.")
+        if op == 1:
+            nuevo_nom = validadores.validaString("Ingrese nuevo nombre de la sucursal:\n", 1, 100, "Error: Nombre de sucursal debe tener entre 1 y 100 caracteres. Por favor, ingrese nuevamente.\n", "Error: El nombre de la sucursal no puede superar los 100 caracteres.\n")
+            self.sucursal.setNombre(nuevo_nom)
+        elif op == 2:
+            nueva_dir = validadores.validaString("Ingrese nueva dirección de la sucursal:\n", 1, 200, "Error: Dirección de la sucursal debe tener entre 1 y 200 caracteres. Por favor, ingrese nuevamente.\n", "Error: Por favor, ingrese una dirección válida.\n")
+            self.sucursal.setDireccion(nueva_dir)
+        elif op == 3:
+            while True:
+                try:
+                    nuevo_ano = int(input("Ingrese el nuevo año de constitución de la sucursal:\n"))
+                    nuevo_mes = int(input("Ingrese el nuevo mes de constitución de la sucursal en formato numérico. Ejemplo: Enero es el mes 1:\n"))
+                    nuevo_dia = int(input("Ingrese el nuevo día de constitución de la sucursal en formato numérico:\n"))
+                    ano_actual = date.today()
+                    if nuevo_ano > int(ano_actual.strftime("%Y")):
+                        print("Error: El año no puede ser mayor a la fecha actual. Por favor, ingrese un año válido.")
+                        consola.pausa()
+                    elif nuevo_ano < 1992:
+                        print("Error: El año de constitución de la sucursal no puede ser menor al año de constitución de la empresa.")
+                        consola.pausa()
+                    elif date(nuevo_ano, nuevo_mes, nuevo_dia):
+                        print("Fecha válida.")
+                        break
+                    else:
+                        print("Error: Ingrese una fecha válida.")
+                except:
+                    print("Error: Por favor, ingrese una fecha válida. Ejemplo: 2024-2-20.")
+                    consola.pausa()
+            nueva_fec = date(nuevo_ano, nuevo_mes, nuevo_dia)
+            self.sucursal.setFechaConstitucion(nueva_fec)
+            id_suc = self.d.consultarIdSucursal(nom_suc)
+            self.sucursal.setId(id_suc)
+
+            self.d.editarSucursal(op, self.sucursal)
+            self.menuSucursales()
 
     def eliminarSucursal(self):
         pass

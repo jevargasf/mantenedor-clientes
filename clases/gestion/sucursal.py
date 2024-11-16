@@ -12,7 +12,7 @@ class Sucursal():
     def getId(self):
         return self.__id
     
-    def setid(self, id: int):
+    def setId(self, id: int):
         self.__id = id
 
     def getNombre(self):

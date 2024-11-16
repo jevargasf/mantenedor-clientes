@@ -194,8 +194,25 @@ class DAO():
         except:
             print("Error en DAO: Error al consultar id de sucursal.")
 
-    def editarSucursal(self):
-        pass
+    def editarSucursal(self, op, suc: Sucursal):
+        try:
+            if op == 1:
+                values = (suc.getNombre(), suc.getId())
+                sql = "update sucursales set nom_suc = %s where id_suc = %s"
+            elif op == 2:
+                values = (suc.getDireccion(), suc.getId())
+                sql = "update sucursales set dir_suc = %s where id_suc = %s"
+            elif op == 3:
+                values = (suc.getFechaConstitucion(), suc.getId())
+                sql = "update sucursales set fec_con = %s where id_suc = %s"
+            self.cursor.execute(sql, values)
+            self.connection.commit()
+            self.__desconectar()
+            print("Sucursal modificada exitosamente.")
+            consola.pausa()
+        except:
+            print("Error en DAO: Error al modificar sucursal.")
+            consola.pausa()
 
     def deshabilitarSucursal(self):
         pass
