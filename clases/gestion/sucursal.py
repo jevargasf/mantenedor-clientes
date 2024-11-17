@@ -5,6 +5,7 @@ class Sucursal():
     __nombre = ""
     __direccion = ""
     __fecha_constitucion = ""
+    __estado = 1
 
     def __init__(self):
         pass
@@ -32,3 +33,9 @@ class Sucursal():
     
     def setFechaConstitucion(self, fec_const: date):
         self.__fecha_constitucion = fec_const
+
+    def getEstado(self):
+        return self.__estado
+    
+    def getEstado(self, nuevo_est: int):
+        self.__estado = nuevo_est

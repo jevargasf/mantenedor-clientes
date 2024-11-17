@@ -35,8 +35,8 @@ class DAO():
 # CRUD Clientes
     def agregarCliente(self, cli: Cliente):
         try:
-            sql = "insert into clientes(rut_cli, nom_cli, ap_pat, ap_mat, eda_cli, tel_cli, pag_cli) values(%s, %s, %s, %s, %s, %s, %s)"
-            valores = (cli.getRut(), cli.getNombre(), cli.getApPaterno(), cli.getApMaterno(), cli.getEdad(), cli.getTelefono(), cli.getFormaPago())
+            sql = "insert into clientes(rut_cli, nom_cli, ap_pat, ap_mat, eda_cli, tel_cli, pag_cli, est_cli) values(%s, %s, %s, %s, %s, %s, %s, %s)"
+            valores = (cli.getRut(), cli.getNombre(), cli.getApPaterno(), cli.getApMaterno(), cli.getEdad(), cli.getTelefono(), cli.getFormaPago(), cli.getEstado())
             self.__conectar()
             self.cursor.execute(sql, valores)
             self.connection.commit()
@@ -47,10 +47,9 @@ class DAO():
             print("Error en DAO: Error al agregar nuevo registro de cliente.\n")
             consola.pausa()
 
-
     def listarClientes(self):
         try:
-            sql = "select rut_cli, nom_cli, ap_pat, ap_mat, eda_cli, tel_cli, pag_cli from clientes"
+            sql = "select rut_cli, nom_cli, ap_pat, ap_mat, eda_cli, tel_cli, pag_cli from clientes where est_cli = 1"
             self.__conectar()
             self.cursor.execute(sql)
             response = self.cursor.fetchall()
@@ -62,7 +61,7 @@ class DAO():
 
     def comprobarRutCliente(self, rut):
         try:
-            sql = "select rut_cli from clientes where rut_cli=%s"
+            sql = "select rut_cli from clientes where rut_cli=%s and est_cli = 1"
             self.__conectar()
             self.cursor.execute(sql, rut)
             response = self.cursor.fetchone()
@@ -74,7 +73,7 @@ class DAO():
 
     def consultarCliente(self, rut):
         try:
-            sql = "select rut_cli, nom_cli, ap_pat, ap_mat, eda_cli, tel_cli, pag_cli from clientes where rut_cli=%s"
+            sql = "select rut_cli, nom_cli, ap_pat, ap_mat, eda_cli, tel_cli, pag_cli from clientes where rut_cli=%s and est_cli = 1"
             self.__conectar()
             self.cursor.execute(sql, rut)
             response = self.cursor.fetchone()
@@ -86,7 +85,7 @@ class DAO():
 
     def consultarIdCliente(self, rut):
         try:
-            sql = "select id_cli from clientes where rut_cli=%s"
+            sql = "select id_cli from clientes where rut_cli=%s and est_cli = 1"
             self.__conectar()
             self.cursor.execute(sql, rut)
             response = self.cursor.fetchone()
@@ -129,8 +128,18 @@ class DAO():
             print("Error en DAO: Error al modificar cliente.")
             consola.pausa()
 
-    def deshabilitarCliente(self):
-        pass
+    def deshabilitarCliente(self, rut):
+        try:
+            sql = "update clientes set est_cli=0 where rut_cli=%s"
+            self.__conectar()
+            self.cursor.execute(sql, rut)
+            self.connection.commit()
+            self.__desconectar()
+            print("Cliente eliminado exitosamente.\n")
+            consola.pausa()
+        except:
+            print("Error en DAO: Error al eliminar cliente.\n")
+            consola.pausa()
 
 # CRUD Sucursales
     def agregarSucursal(self, suc: Sucursal):

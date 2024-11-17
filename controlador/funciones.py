@@ -263,7 +263,39 @@ class Funciones():
         # cancelar la operación en todo momento?
 
     def eliminarCliente(self):
-        pass
+        rut = validadores.validaString("Ingrese RUT del cliente que desea eliminar con puntos y guión. Ej: 11.111.111-1:\n", 11, 12, "Error: Por favor, ingrese RUT con puntos y guión.\n", "Error: Por favor, ingrese RUT con puntos y guión.")
+        if validaRut.valida(rut) == True:
+            if rut.find(".") != -1:
+                rut_sin_puntos = rut.replace(".", "")
+            if rut.find("-") != -1:
+                rut_sin_guion = rut_sin_puntos.replace("-", "")
+            comprobar_cliente = self.d.comprobarRutCliente(rut_sin_guion)
+            if comprobar_cliente is None:
+                print("Error: El RUT del cliente no existe. Por favor, intente nuevamente.")
+                self.menuClientes()
+        else:
+            consola.pausa()
+            print("Error: El RUT del cliente no es válido. Intente nuevamente.\n")
+            self.menuClientes()
+    
+        # mostrar datos cliente
+        respuesta = self.d.consultarCliente(rut_sin_guion)
+        print(f"---- Datos cliente ----\n")
+        print(f"1. RUT:{respuesta[0]}")
+        print(f"2. Nombre: {respuesta[1]}")
+        print(f"3. Apellido paterno: {respuesta[2]}")
+        print(f"4. Apellido materno: {respuesta[3]}")
+        print(f"5. Edad: {respuesta[4]}")
+        print(f"6. Teléfono: +56{respuesta[5]}")
+        print(f"7. Forma de pago: {respuesta[6]}\n")
+        # preguntar si está seguro de eliminarlo y/n
+        op = validadores.validaInt("¿Está seguro de que desea eliminar este cliente? 1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
+        if op == 1:
+            self.d.deshabilitarCliente(rut_sin_guion)
+        elif op == 2:
+            print("La eliminación fue cancelada.\n")
+            consola.pausa()
+        self.menuClientes()
 
 # Administración de sucursales
     def registrarSucursal(self):

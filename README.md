@@ -4,7 +4,6 @@ Próximos pasos:
 	- Formatear datos en interfaz con beautifultable
 
 - Editar y eliminar registros
-	- modificar asignación (modificar campo id sucursal)
 	- eliminar cliente (deshabilitar)
 	- eliminar sucursal (deshabilitar)
 	- eliminar asignación (deshabilitar o eliminar ??)
