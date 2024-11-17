@@ -73,7 +73,7 @@ class Funciones():
             self.menuPrincipal()
     
     def menuAsignaciones(self):
-        op = validadores.validaInt("¿Qué desea hacer?\n1. Asignar cliente\n2. Ver asignaciones\n3. Modificar asignación\n4. Eliminar asignación\n5. Volver\n", 1, 5, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese una opción válida.")
+        op = validadores.validaInt("¿Qué desea hacer?\n1. Asignar cliente\n2. Ver asignaciones\n3. Modificar asignación\n4. Volver\n", 1, 4, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese una opción válida.")
 
         if op == 1:
             self.asignarCliente()
@@ -82,8 +82,6 @@ class Funciones():
         elif op == 3:
             self.modificarAsignacion()
         elif op == 4:
-            self.eliminarAsignacion()
-        elif op == 5:
             self.menuPrincipal()
 
     def menuEstadísticas(self):
@@ -506,9 +504,6 @@ class Funciones():
         self.d.editarAsignacion(self.cliente_sucursal)
 
         self.menuAsignaciones()
-        # generar edit asignación (nuevo id sucursal)
 
-    def eliminarAsignacion(self):
-        pass
 
 

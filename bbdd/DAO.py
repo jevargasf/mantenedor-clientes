@@ -291,6 +291,3 @@ class DAO():
         except:
             print("Error en DAO: Error al modificar la asignación de cliente a sucursal.")
             consola.pausa()
-            
-    def borrarAsignacion(self):
-        pass
