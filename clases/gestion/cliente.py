@@ -30,5 +30,5 @@ class Cliente(Persona):
     def getEstado(self):
         return self.__estado
     
-    def getEstado(self, nuevo_est: int):
+    def setEstado(self, nuevo_est: int):
         self.__estado = nuevo_est

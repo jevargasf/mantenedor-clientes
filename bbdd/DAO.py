@@ -1,7 +1,6 @@
 from clases.gestion.cliente import Cliente
 from clases.gestion.sucursal import Sucursal
 from clases.gestion.cliente_sucursal import ClienteSucursal
-from os import system
 import pymysql
 import controlador.consola as consola
 
@@ -9,9 +8,6 @@ import controlador.consola as consola
 class DAO():
     def __init__(self):
         pass
-    
-    def pause(self):
-        system("read -p 'Presione una tecla para continuar...'")
 
     def __conectar(self):
         try:
@@ -61,7 +57,7 @@ class DAO():
 
     def comprobarRutCliente(self, rut):
         try:
-            sql = "select rut_cli from clientes where rut_cli=%s and est_cli = 1"
+            sql = "select rut_cli, est_cli from clientes where rut_cli=%s"
             self.__conectar()
             self.cursor.execute(sql, rut)
             response = self.cursor.fetchone()
@@ -128,17 +124,16 @@ class DAO():
             print("Error en DAO: Error al modificar cliente.")
             consola.pausa()
 
-    def deshabilitarCliente(self, rut):
+    def modificarEstadoCliente(self, cli: Cliente):
         try:
-            sql = "update clientes set est_cli=0 where rut_cli=%s"
+            sql = "update clientes set est_cli=%s where rut_cli=%s"
+            values = (cli.getEstado(), cli.getRut())
             self.__conectar()
-            self.cursor.execute(sql, rut)
+            self.cursor.execute(sql, values)
             self.connection.commit()
             self.__desconectar()
-            print("Cliente eliminado exitosamente.\n")
-            consola.pausa()
         except:
-            print("Error en DAO: Error al eliminar cliente.\n")
+            print("Error en DAO: Error al modificar el estado del cliente.\n")
             consola.pausa()
 
 # CRUD Sucursales
@@ -158,7 +153,7 @@ class DAO():
 
     def listarSucursales(self):
         try:
-            sql = "select nom_suc, dir_suc, fec_con from sucursales"
+            sql = "select nom_suc, dir_suc, fec_con from sucursales where est_suc = 1"
             self.__conectar()
             self.cursor.execute(sql)
             response = self.cursor.fetchall()
@@ -170,7 +165,7 @@ class DAO():
 
     def comprobarNombreSucursal(self, nombre):
         try:
-            sql = "select nom_suc from sucursales where nom_suc=%s"
+            sql = "select nom_suc, est_suc from sucursales where nom_suc=%s"
             self.__conectar()
             self.cursor.execute(sql, nombre)
             response = self.cursor.fetchone()
@@ -182,7 +177,7 @@ class DAO():
 
     def consultarSucursal(self, nombre):
         try:
-            sql = "select nom_suc, dir_suc, fec_con from sucursales where nom_suc=%s"
+            sql = "select nom_suc, dir_suc, fec_con from sucursales where nom_suc=%s and est_suc = 1"
             self.__conectar()
             self.cursor.execute(sql, nombre)
             response = self.cursor.fetchone()
@@ -194,7 +189,7 @@ class DAO():
 
     def consultarIdSucursal(self, nombre):
         try:
-            sql = "select id_suc from sucursales where nom_suc=%s"
+            sql = "select id_suc from sucursales where nom_suc=%s and est_suc = 1"
             self.__conectar()
             self.cursor.execute(sql, nombre)
             response = self.cursor.fetchone()
@@ -224,8 +219,17 @@ class DAO():
             print("Error en DAO: Error al modificar sucursal.")
             consola.pausa()
 
-    def deshabilitarSucursal(self):
-        pass
+    def modificarEstadoSucursal(self, suc: Sucursal):
+        try:
+            sql = "update sucursales set est_suc = %s where nom_suc = %s"
+            values = (suc.getEstado(), suc.getNombre())
+            self.__conectar()
+            self.cursor.execute(sql, values)
+            self.connection.commit()
+            self.__desconectar()
+        except:
+            print("Error en DAO: Error al eliminar sucursal.")
+            consola.pausa()
 
 # CRUD Asignaciones
     def asignarCliente(self, asig: ClienteSucursal):
@@ -244,7 +248,7 @@ class DAO():
 
     def comprobarAsignacion(self, id_cli):
         try:
-            sql = "select id_nub from nub where id_cli=%s"
+            sql = "select id_nub from nub where nub.id_cli=%s and est_asi = 1"
             self.__conectar()
             self.cursor.execute(sql, id_cli)
             response = self.cursor.fetchone()
@@ -253,10 +257,10 @@ class DAO():
         except:
             print("Error en DAO: Error al consultar asignación.\n")
             consola.pausa()
-            
+    
     def listarAsignaciones(self):
         try:
-            sql = "select clientes.nom_cli, sucursales.nom_suc from nub inner join clientes on nub.id_cli = clientes.id_cli inner join sucursales on nub.id_suc = sucursales.id_suc"
+            sql = "select clientes.nom_cli||' '||clientes.ap_pat, sucursales.nom_suc from nub inner join clientes on nub.id_cli = clientes.id_cli inner join sucursales on nub.id_suc = sucursales.id_suc where est_cli = 1 and est_suc = 1 and nub.est_asi = 1"
             self.__conectar()
             self.cursor.execute(sql)
             response = self.cursor.fetchall()
@@ -268,7 +272,7 @@ class DAO():
 
     def consultarAsginacion(self, id_cli):
         try:
-            sql = "select clientes.nom_cli, sucursales.nom_suc from nub inner join clientes on nub.id_cli = clientes.id_cli inner join sucursales on nub.id_suc = sucursales.id_suc where nub.id_cli = %s"
+            sql = "select clientes.nom_cli||' '||clientes.ap_pat, sucursales.nom_suc from nub inner join clientes on nub.id_cli = clientes.id_cli inner join sucursales on nub.id_suc = sucursales.id_suc where nub.id_cli = %s and clientes.est_cli = 1 and sucursales.est_suc = 1 and nub.est_asi = 1"
             self.__conectar()
             self.cursor.execute(sql, id_cli)
             response = self.cursor.fetchone()
@@ -280,7 +284,7 @@ class DAO():
 
     def editarAsignacion(self, asig: ClienteSucursal):
         try:
-            sql = "update nub set id_cli = %s, id_suc = %s where id_nub = %s"
+            sql = "update nub set id_cli = %s, id_suc = %s where id_nub = %s and est_asi = 1"
             values = (asig.cliente.getId(), asig.sucursal.getId(), asig.getId())
             self.__conectar()
             self.cursor.execute(sql, values)
@@ -291,3 +295,15 @@ class DAO():
         except:
             print("Error en DAO: Error al modificar la asignación de cliente a sucursal.")
             consola.pausa()
+
+    # la idea es que exista solo 1 asignación vigente en la tabla (que coincidan id_cli y estado = 1)
+    def deshabilitarAsginacion(self, id_cli):
+        try:
+            sql = "update nub set est_asi = 0 where id_cli = %s and est_asi = 1"
+            self.__conectar()
+            self.cursor.execute(sql, id_cli)
+            self.connection.commit()
+            self.__desconectar()
+            print("Asignación eliminada exitosamente.")
+        except:
+            print("Error en DAO: Error al eliminar la asignación de cliente a sucursal.")

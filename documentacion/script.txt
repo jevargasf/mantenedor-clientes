@@ -37,6 +37,7 @@ create table nub(
 	id_nub int primary key auto_increment,
     id_cli int,
     id_suc int,
+    est_asi bool,
     foreign key(id_cli) references clientes(id_cli),
     foreign key(id_suc) references sucursales(id_suc)
 );

@@ -5,7 +5,6 @@ Próximos pasos:
 
 - Editar y eliminar registros
 	- eliminar sucursal (deshabilitar)
-	- eliminar asignación (deshabilitar o eliminar ??)
 
 - Menú login: 
 	- Estructura menús:
