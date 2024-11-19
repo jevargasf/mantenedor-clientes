@@ -18,6 +18,8 @@ Próximos pasos:
 			- Cerrar sesión
 	- Encriptación de contraseña -> modificar modelo de bbdd
 	- Enmascarar contraseña en interfaz de usuario: usar maskpass para usar asteriscos.
+admin 'inacap123'
+comercial 'inacap321'
 
 
 - Exportar datos JSON (menú API)

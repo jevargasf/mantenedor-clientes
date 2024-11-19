@@ -1,9 +1,10 @@
 from clases.gestion.cliente import Cliente
 from clases.gestion.sucursal import Sucursal
 from clases.gestion.cliente_sucursal import ClienteSucursal
+from clases.auth.usuario import Usuario
 import pymysql
 import controlador.consola as consola
-
+from cryptography.fernet import Fernet
 
 class DAO():
     def __init__(self):
@@ -27,7 +28,29 @@ class DAO():
                     
     def __desconectar(self):
         self.connection.close()
+
+# Login
+    def login(self, usu: Usuario):
+        try:
+            sql = "select * from usuarios where nom_usu = %s"
+            self.cursor.execute(sql, usu.getNombreUsuario())
+            response = self.cursor.fetchone()
+            self.__desconectar()
+
+            if response is None:
+                return None
+            else:
+                clave_fernet = "xKCclFQyQmODLcReVrSPJcdlpU9JhXN5VbD58cuhckg="
+        #  me llega una instancia de usuario con los datos
+        # extraigo los datos de la instancia
+        # consulto a la bbdd con un select nom_usu y contreña
+        # devuelve un resultado
+        # si no se encuentra, error al consultar en DAO
         
+        
+        except:
+            print("Error en DAO: Error al comprobar credenciales.\n")
+            consola.pausa()
 # CRUD Clientes
     def agregarCliente(self, cli: Cliente):
         try:
