@@ -30,3 +30,6 @@
     - comprueba si cliente ya está asignado a sucursal
 	- asginaciones cuando el cliente ya fue eliminado
 	- reconoce y reestablece cuando los registros ya fueron eliminados
+
+Falta:
+- Mostrar los registros como tabla T_T

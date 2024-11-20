@@ -203,16 +203,13 @@ class Funciones():
     
         if respuesta is None or len(respuesta) == 0:
             print("No existen clientes registrados en la base de datos.\n")
-        else:    
+        else:
+            table = BeautifulTable() 
             for x, cliente in enumerate(respuesta):
-                print(f"---- Cliente N° {x+1} ----\n")
-                print(f"RUT:{cliente[0]}")
-                print(f"Nombre: {cliente[1]}")
-                print(f"Apellido paterno: {cliente[2]}")
-                print(f"Apellido materno: {cliente[3]}")
-                print(f"Edad: {cliente[4]}")
-                print(f"Teléfono: +56{cliente[5]}")
-                print(f"Forma de pago: {cliente[6]}\n")
+                table.rows.append([x+1, cliente[0], cliente[1], cliente[2], cliente[3], cliente[4], cliente[5], cliente[6]])
+            
+            table.columns.header = ["N°", "RUT", "Nombre", "Apellido Paterno", "Apellido Materno", "Edad", "Teléfono", "Forma de Pago"]
+            print(table)
 
         consola.pausa()
         self.menuClientes()
@@ -448,11 +445,11 @@ class Funciones():
         if response is None:
             print("No existen sucursales registradas en la base de datos.\n")
         else:
+            table = BeautifulTable()
+            table.columns.header = ["N°", "Nombre Sucursal", "Dirección", "Fecha de Constitución"]
             for x, sucursal in enumerate(response):
-                print(f"---- Sucursal N° {x+1} ----\n")
-                print(f"Nombre: {sucursal[0]}")
-                print(f"Dirección: {sucursal[1]}")
-                print(f"Fecha constitución: {sucursal[2]}\n")
+                table.rows.append([x+1, sucursal[0], sucursal[1], str(sucursal[2])])
+            print(table)
 
         consola.pausa()
         self.menuSucursales()
@@ -618,11 +615,12 @@ class Funciones():
         if response is None or len(response) == 0:
             print("No hay clientes asginados a sucursales actualmente.\n")
         else:
+            table = BeautifulTable()
+            table.columns.header = ["N°", "Nombre Cliente", "Sucursal"]
             for x, asignaciones in enumerate(response):
-                print(f"---- Asignación {x+1} ----\n")
-                print(f"Cliente: {asignaciones[0]}")
-                print(f"Sucursal: {asignaciones[1]}\n")
-
+                table.rows.append([x+1, asignaciones[0], asignaciones[1]])
+            print(table)
+            
         consola.pausa()
         self.menuAsignaciones()
 
