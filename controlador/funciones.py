@@ -151,8 +151,39 @@ class Funciones():
        
         comprobar_cliente = self.d.comprobarRutCliente(rut_sin_guion)
 
+        if comprobar_cliente is None:
+            nombre = validadores.validaString("Ingrese nombre del cliente:\n", 1, 50, "Error: El nombre debe tener entre 1 y 50 caracteres.", "Error: Por favor, ingrese un nombre válido.")
+            ap_pat = validadores.validaString("Ingrese apellido paterno del cliente:\n", 1, 50, "Error: El apellido paterno debe tener entre 1 y 50 caracteres.", "Error: Por favor, ingrese un apellido paterno válido.")
+            ap_mat = validadores.validaString("Ingrese apellido materno del cliente:\n", 1, 50, "Error: El apellido materno debe tener entre 1 y 50 caracteres.", "Error: Por favor, ingrese un apellido paterno válido.")
+            edad = validadores.validaInt("Ingrese la edad del cliente:\n", 1, 110, "Error de rango: Ingrese una edad válida. Debe ser mayor que 0 y menor que 110.", "Error de tipo: Ingrese la edad como un número.")
+            telefono = validadores.validaString("Ingrese número de teléfono del cliente. Ejemplo: 987654321\n", 9, 9, "Error: Por favor, ingrese un número de teléfono de 9 dígitos.", "Error: Por favor, ingrese un número de teléfono válido.")
+            forma_pago = validadores.validaString("Ingrese forma de pago del cliente:\n1. Efectivo\n2. Débito\n3. Crédito\n", 1, 3, "Error de rango: Por favor, ingrese una de las opciones del menú.", "Error de tipo: Ingrese una opción numérica.")
+
+            if forma_pago == "1":
+                forma_pago = "Efectivo"
+                
+            elif forma_pago == "2":
+                forma_pago = "Débito"
+                
+            elif forma_pago == "3":
+                forma_pago = "Crédito"
+                
+        
+            self.cliente.setRut(rut_sin_guion)
+            self.cliente.setNombre(nombre)
+            self.cliente.setApPaterno(ap_pat)
+            self.cliente.setApMaterno(ap_mat)
+            self.cliente.setTelefono(telefono)
+            self.cliente.setEdad(edad)
+            self.cliente.setFormaPago(forma_pago)
+            self.cliente.setEstado(1)
+            
+            self.d.agregarCliente(self.cliente)
+            
+            consola.pausa()
+            self.menuClientes()
         # si cliente ya existe: dos casos
-        if comprobar_cliente[0] == rut_sin_guion and comprobar_cliente[1] == 1:
+        elif comprobar_cliente[0] == rut_sin_guion and comprobar_cliente[1] == 1:
             print("Error: El RUT ingresado ya está registrado. Por favor, intente nuevamente.\n")
             consola.pausa()
             self.menuClientes()
@@ -171,32 +202,7 @@ class Funciones():
                 print("La operación fue cancelada.\n")
                 consola.pausa()
                 self.menuClientes()
-        else:
-            nombre = validadores.validaString("Ingrese nombre del cliente:\n", 1, 50, "Error: El nombre debe tener entre 1 y 50 caracteres.", "Error: Por favor, ingrese un nombre válido.")
-            ap_pat = validadores.validaString("Ingrese apellido paterno del cliente:\n", 1, 50, "Error: El apellido paterno debe tener entre 1 y 50 caracteres.", "Error: Por favor, ingrese un apellido paterno válido.")
-            ap_mat = validadores.validaString("Ingrese apellido materno del cliente:\n", 1, 50, "Error: El apellido materno debe tener entre 1 y 50 caracteres.", "Error: Por favor, ingrese un apellido paterno válido.")
-            edad = validadores.validaInt("Ingrese la edad del cliente:\n", 1, 110, "Error de rango: Ingrese una edad válida. Debe ser mayor que 0 y menor que 110.", "Error de tipo: Ingrese la edad como un número.")
-            telefono = validadores.validaString("Ingrese número de teléfono del cliente. Ejemplo: 987654321\n", 9, 9, "Error: Por favor, ingrese un número de teléfono de 9 dígitos.", "Error: Por favor, ingrese un número de teléfono válido.")
-            forma_pago = validadores.validaString("Ingrese forma de pago del cliente:\n1. Efectivo\n2. Débito\n3. Crédito\n", 1, 3, "Error de rango: Por favor, ingrese una de las opciones del menú.", "Error de tipo: Ingrese una opción numérica.")
 
-            if forma_pago == 1:
-                forma_pago = "Efectivo"
-            elif forma_pago == 2:
-                forma_pago = "Débito"
-            elif forma_pago == 3:
-                forma_pago = "Crédito"
-        
-            self.cliente.setRut(rut)
-            self.cliente.setNombre(nombre)
-            self.cliente.setApPaterno(ap_pat)
-            self.cliente.setApMaterno(ap_mat)
-            self.cliente.setTelefono(telefono)
-            self.cliente.setEdad(edad)
-            self.cliente.setFormaPago(forma_pago)
-            self.d.agregarCliente(self.cliente)
-            
-            consola.pausa()
-            self.menuClientes()
 
     def verClientes(self):
         respuesta = self.d.listarClientes()
@@ -312,8 +318,16 @@ class Funciones():
             self.cliente.setTelefono(nuevo_telefono)
         elif op == 7:
             nueva_forma_pago = validadores.validaString("Ingrese nueva forma de pago del cliente:\n1. Efectivo\n2. Débito\n3. Crédito\n", 1, 3, "Error de rango: Por favor, ingrese una de las opciones del menú.", "Error de tipo: Ingrese una opción numérica.")
+            if nueva_forma_pago == "1":
+                nueva_forma_pago = "Efectivo"
+                
+            elif nueva_forma_pago == "2":
+                nueva_forma_pago = "Débito"
+                
+            elif nueva_forma_pago == "3":
+                nueva_forma_pago = "Crédito"
             self.cliente.setFormaPago(nueva_forma_pago)
-        
+
         # identificar id de registro en tabla clientes
         respuesta_id = self.d.consultarIdCliente(rut_sin_guion)
         id_cli = respuesta_id[0]
@@ -321,7 +335,8 @@ class Funciones():
         # realizar modificación en la tabla
         self.d.editarCliente(op, self.cliente)
         
-        # cancelar la operación en todo momento?
+        consola.pausa()
+        self.menuClientes()
 
     def eliminarCliente(self):
         rut = input("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n")
@@ -363,6 +378,7 @@ class Funciones():
         if comprobar_asignacion is None or len(comprobar_asignacion) == 0:            
             op = validadores.validaInt("¿Está seguro de que desea eliminar este cliente? Esta operación no se puede deshacer. 1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
             if op == 1:
+                # cambiar estado asignación también
                 self.cliente.setEstado(0)
                 self.cliente.setRut(rut_sin_guion)
                 self.d.modificarEstadoCliente(self.cliente)
@@ -561,6 +577,9 @@ class Funciones():
                 rut_sin_guion = rut_sin_puntos.replace("-", "")
 
         comprobar_cliente = self.d.comprobarRutCliente(rut_sin_guion)
+        # Condición: El cliente no existe -> Error
+        # Condición: El cliente existe y no está habilitado -> Error
+        # Condición: El cliente existe y está habilitado -> Seguir
         if comprobar_cliente is None:
             print("Error: El RUT ingresado no existe. Por favor, intente nuevamente.\n")
             consola.pausa()
@@ -573,12 +592,23 @@ class Funciones():
         pedir_id = self.d.consultarIdCliente(rut_sin_guion)
         id_cli = pedir_id[0]
         comprobar_asignacion = self.d.comprobarAsignacion(id_cli)
+        print(comprobar_asignacion)
+        # Condición: No existe una asignación. Consulta = None
+        
+        # Condición: Ya existe una asignación y Estado asignación = habilitado
         if comprobar_asignacion[0] == 1:
             print("Error: El cliente ya tiene una sucursal asignada. Por favor, intente nuevamente con otro cliente.\n")
             consola.pausa()
             self.menuAsignaciones()
-        elif comprobar_asignacion[0] == 0:
-            op = validadores.validaInt(f"El cliente poseía una asginación anteriormente en la {comprobar_asignacion[3]}, pero fue eliminada. ¿Desea reestablecerla?\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
+        # Condición: Ya existe una asignación, pero estado sucursal = deshabilitado
+        elif comprobar_asignacion[0] == 0 and comprobar_asignacion[5] == 0:
+            # Ingrese nombre de la sucursal que desea asignar
+            print("Error: El cliente poseía una asignación anteriormente, pero la sucursal fue eliminada.")
+            consola.pausa()
+
+        # Condición: Ya existe una asignación, Estado asignación = deshabilitado y estado sucursal = habilitado
+        elif comprobar_asignacion[0] == 0 and comprobar_asignacion[5] == 1:
+            op = validadores.validaInt(f"El cliente poseía una asginación anteriormente en la {comprobar_asignacion[4]}, pero fue eliminada. ¿Desea reestablecerla?\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
             if op == 1:
                 id_cli = comprobar_asignacion[1]
                 self.d.reestablecerAsginacion(id_cli)
@@ -615,6 +645,7 @@ class Funciones():
         if response is None or len(response) == 0:
             print("No hay clientes asginados a sucursales actualmente.\n")
         else:
+            print(response)
             table = BeautifulTable()
             table.columns.header = ["N°", "Nombre Cliente", "Sucursal"]
             for x, asignaciones in enumerate(response):

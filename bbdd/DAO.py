@@ -64,12 +64,13 @@ class DAO():
         try:
             sql = "insert into clientes(rut_cli, nom_cli, ap_pat, ap_mat, eda_cli, tel_cli, pag_cli, est_cli) values(%s, %s, %s, %s, %s, %s, %s, %s)"
             valores = (cli.getRut(), cli.getNombre(), cli.getApPaterno(), cli.getApMaterno(), cli.getEdad(), cli.getTelefono(), cli.getFormaPago(), cli.getEstado())
+            print(valores)
             self.__conectar()
             self.cursor.execute(sql, valores)
             self.connection.commit()
             self.__desconectar()
             print("Cliente registrado exitosamente.\n")
-            consola.pausa()
+
         except:
             print("Error en DAO: Error al agregar nuevo registro de cliente.\n")
             consola.pausa()
@@ -279,7 +280,7 @@ class DAO():
 
     def comprobarAsignacion(self, id_cli):
         try:
-            sql = "select est_asi, id_cli, nub.id_suc, nom_suc from nub inner join sucursales on nub.id_suc = sucursales.id_suc where nub.id_cli=%s"
+            sql = "select nub.est_asi, nub.id_cli, nub.id_suc, sucursales.nom_suc, sucursales.est_suc from nub inner join sucursales on nub.id_suc = sucursales.id_suc where nub.id_cli=%s"
             self.__conectar()
             self.cursor.execute(sql, id_cli)
             response = self.cursor.fetchone()
