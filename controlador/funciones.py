@@ -1,6 +1,7 @@
 from clases.gestion.cliente import Cliente
 from clases.gestion.sucursal import Sucursal
 from clases.gestion.cliente_sucursal import ClienteSucursal
+from clases.auth.usuario import Usuario
 from bbdd.DAO import DAO
 from datetime import date
 import controlador.validaRut as validaRut
@@ -11,6 +12,7 @@ class Funciones():
     cliente = Cliente()
     sucursal = Sucursal()
     cliente_sucursal = ClienteSucursal()
+    usuario = Usuario()
     d = DAO()
 
     def __init__(self):
@@ -21,23 +23,30 @@ class Funciones():
         op = validadores.validaInt("Ingrese una opción:\n1. Iniciar Sesión\n2. Salir\n", 1, 2, "Error: Ingrese un valor numérico.", "Error de rango: Ingrese una de las opciones válidas.")
 
         if op == 1:
-            self.menuPrincipal()
+            self.iniciarSesion()
         elif op == 2:
             self.salir()
         
-    def menuPrincipal(self):
-        op = validadores.validaInt("¿Qué desea hacer?\n1. Administrar clientes\n2. Administrar sucursales\n3. Administrar asignaciones\n4. Estadísticas\n5. Cerrar sesión\n", 1, 5, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese un valor numérico.")
+    def menuAdmin(self):
+        op = validadores.validaInt("¿Qué desea hacer?\n1. Administrar clientes\n2. Administrar sucursales\n3. Recuperar JSON\n4. Cerrar sesión\n", 1, 4, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese un valor numérico.")
 
         if op == 1:
             self.menuClientes()
         elif op == 2:
             self.menuSucursales()
         elif op == 3:
-            self.menuAsignaciones()
+            self.recuperarJson()
         elif op == 4:
-            self.menuEstadísticas()
-        elif op == 5:
             self.cerrarSesion()
+
+    def menuComercial(self):
+        op = validadores.validaInt("¿Qué desea hacer?\n1. Administrar asignaciones\n2. Cerrar sesión\n", 1, 2, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese un valor numérico.")
+
+        if op == 1:
+            self.menuAsignaciones()
+        elif op == 2:
+            self.cerrarSesion()
+
 
     def menuClientes(self):
         op = validadores.validaInt("¿Qué desea hacer?\n1. Registrar cliente\n2. Ver clientes\n3. Buscar cliente\n4. Modificar cliente\n5. Eliminar cliente\n6. Volver\n", 1, 6, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese una opción válida.")
@@ -53,7 +62,7 @@ class Funciones():
         elif op == 5:
             self.eliminarCliente()
         elif op == 6:
-            self.menuPrincipal()
+            self.menuAdmin()
 
     def menuSucursales(self):
         op = validadores.validaInt("¿Qué desea hacer?\n1. Registrar sucursal\n2. Ver sucursales\n3. Buscar sucursal\n4. Modificar sucursal\n5. Eliminar sucursal\n6. Volver\n", 1, 6, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese una opción válida.")
@@ -69,7 +78,7 @@ class Funciones():
         elif op == 5:
             self.eliminarSucursal()
         elif op == 6:
-            self.menuPrincipal()
+            self.menuAdmin()
     
     def menuAsignaciones(self):
         op = validadores.validaInt("¿Qué desea hacer?\n1. Asignar cliente\n2. Ver asignaciones\n3. Modificar asignación\n4. Volver\n", 1, 4, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese una opción válida.")
@@ -81,7 +90,7 @@ class Funciones():
         elif op == 3:
             self.modificarAsignacion()
         elif op == 4:
-            self.menuPrincipal()
+            self.menuComercial()
 
     def menuEstadísticas(self):
         op = validadores.validaInt("¿Qué desea hacer?\n1. Opción 1\n2. Opción 2\n3. Opción 3\n4. Volver\n", 1, 4, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese una opción válida.")
@@ -93,8 +102,38 @@ class Funciones():
 
 # Autenticación
     def iniciarSesion(self):
-        pass
-    
+        # pedir nombre usuario (RUT)
+        while True:
+            try:
+                rut = input("Ingrese su RUT con puntos y guión. Ej: 11.111.111-1:\n")
+                if validaRut.valida(rut) == True:
+                    break
+                else:
+                    print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
+            except:
+                print("Error: Por favor, ingrese un rut válido.\n")
+        
+        if rut.find(".") != -1:
+            rut_sin_puntos = rut.replace(".", "")
+            rut_sin_guion = rut_sin_puntos.replace("-", "")
+        
+        # pedir contraseña (enmascarar)
+        contraseña = validadores.validaString("Ingrese su contraseña:\n", 1, 10, "Error: La contraseña no puede tener más de 10 caracteres.\n", "Error: Ingrese una contraseña válida.\n")
+
+        self.usuario.setNombreUsuario(rut_sin_guion)
+        self.usuario.setContraseña(contraseña)
+        respuesta = self.d.login(self.usuario)
+        
+        if respuesta[2] == 1:
+            self.menuAdmin()
+        elif respuesta[2] == 2:
+            self.menuComercial()
+        elif respuesta is None:
+            print("Error: RUT y/o la contraseña incorrectos. Intente nuevamente.\n")
+            consola.pausa()
+        # if perfil == admin => menú admin
+        # elif perfil == comercial => menú comercial
+        
     def cerrarSesion(self):
         self.menuInicio()
 
@@ -604,3 +643,6 @@ class Funciones():
         self.menuAsignaciones()
 
 
+# JSON
+    def recuperarJson():
+        pass

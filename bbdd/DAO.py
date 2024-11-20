@@ -32,7 +32,9 @@ class DAO():
 # Login
     def login(self, usu: Usuario):
         try:
-            sql = "select * from usuarios where nom_usu = %s"
+            self.__conectar()
+            sql = "select usuarios.nom_usu, usuarios.con_usu, usuarios.id_per, perfiles.nom_per, usuarios.est_usu from usuarios inner join perfiles on usuarios.id_per = perfiles.id_per where usuarios.nom_usu = %s"
+            print(usu.getNombreUsuario())
             self.cursor.execute(sql, usu.getNombreUsuario())
             response = self.cursor.fetchone()
             self.__desconectar()
@@ -40,17 +42,23 @@ class DAO():
             if response is None:
                 return None
             else:
+                #key = Fernet.generate_key()
                 clave_fernet = "xKCclFQyQmODLcReVrSPJcdlpU9JhXN5VbD58cuhckg="
-        #  me llega una instancia de usuario con los datos
-        # extraigo los datos de la instancia
-        # consulto a la bbdd con un select nom_usu y contreña
-        # devuelve un resultado
-        # si no se encuentra, error al consultar en DAO
-        
-        
+                f = Fernet(clave_fernet)
+                con_ingresada = usu.getContraseña()
+                
+                con_encriptada = response[1]
+                
+                con_desencriptada = f.decrypt(con_encriptada).decode()
+                print(con_desencriptada, con_ingresada)
+                if con_ingresada == con_desencriptada:
+                    return response
+                else:
+                    return None        
         except:
             print("Error en DAO: Error al comprobar credenciales.\n")
             consola.pausa()
+
 # CRUD Clientes
     def agregarCliente(self, cli: Cliente):
         try:
