@@ -1,4 +1,5 @@
 import controlador.consola as consola
+import getpass
 
 def validaString(inst: str, min: int, max: int, err: str, exc: str):
     while True:
@@ -26,3 +27,17 @@ def validaInt(inst: str, min: int, max: int, err: str, exc: str):
         except:
             print(exc)
             consola.pausa()
+
+def validaContraseña(inst: str, min: int, max: int, err: str, exc: str):
+    while True:
+        try:
+            op = getpass.getpass(inst)
+            if min <= len(op) <= max:
+                break
+            else:
+                print(err)
+                consola.pausa()
+        except:
+            print(exc)
+            consola.pausa()
+    return op

@@ -7,6 +7,8 @@ from datetime import date
 import controlador.validaRut as validaRut
 import controlador.validadores as validadores
 import controlador.consola as consola
+import controlador.api as api
+from beautifultable import BeautifulTable
 
 class Funciones():
     cliente = Cliente()
@@ -28,6 +30,7 @@ class Funciones():
             self.salir()
         
     def menuAdmin(self):
+        print(f"Bienvenido. Perfil: {self.usuario.perfil.getNomPerfil()}\n")
         op = validadores.validaInt("¿Qué desea hacer?\n1. Administrar clientes\n2. Administrar sucursales\n3. Recuperar JSON\n4. Cerrar sesión\n", 1, 4, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese un valor numérico.")
 
         if op == 1:
@@ -40,6 +43,7 @@ class Funciones():
             self.cerrarSesion()
 
     def menuComercial(self):
+        print(f"Bienvenido. Perfil: {self.usuario.perfil.getNomPerfil()}\n")
         op = validadores.validaInt("¿Qué desea hacer?\n1. Administrar asignaciones\n2. Cerrar sesión\n", 1, 2, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese un valor numérico.")
 
         if op == 1:
@@ -92,9 +96,6 @@ class Funciones():
         elif op == 4:
             self.menuComercial()
 
-    def menuEstadísticas(self):
-        op = validadores.validaInt("¿Qué desea hacer?\n1. Opción 1\n2. Opción 2\n3. Opción 3\n4. Volver\n", 1, 4, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese una opción válida.")
-
     def salir(self):
         pass
 
@@ -118,12 +119,14 @@ class Funciones():
             rut_sin_guion = rut_sin_puntos.replace("-", "")
         
         # pedir contraseña (enmascarar)
-        contraseña = validadores.validaString("Ingrese su contraseña:\n", 1, 10, "Error: La contraseña no puede tener más de 10 caracteres.\n", "Error: Ingrese una contraseña válida.\n")
+        contraseña = validadores.validaContraseña("Ingrese contraseña:\n", 1, 10, "Error: La contraseña debe tener entre 1 y 10 caracteres.", "Error: Por favor, ingrese una contraseña válida.")
 
         self.usuario.setNombreUsuario(rut_sin_guion)
         self.usuario.setContraseña(contraseña)
         respuesta = self.d.login(self.usuario)
         
+        
+        self.usuario.perfil.setNomPerfil(respuesta[3])
         if respuesta[2] == 1:
             self.menuAdmin()
         elif respuesta[2] == 2:
@@ -131,10 +134,10 @@ class Funciones():
         elif respuesta is None:
             print("Error: RUT y/o la contraseña incorrectos. Intente nuevamente.\n")
             consola.pausa()
-        # if perfil == admin => menú admin
-        # elif perfil == comercial => menú comercial
         
     def cerrarSesion(self):
+        print("Cerrando sesión...\n")
+        consola.pausa()
         self.menuInicio()
 
 # Administración de clientes
@@ -644,5 +647,24 @@ class Funciones():
 
 
 # JSON
-    def recuperarJson():
-        pass
+    def recuperarJson(self):
+        
+        respuesta = api.consultar()
+        for x, registro in enumerate(respuesta):
+            print(f'---- Oferta N° {x+1}: {registro["titulo"]} ----\n')
+            print("Detalles:\n")
+            print(f' - Tipo: {registro["detalles"]["tipo"]}\n')
+            print(f' - Empresa: {registro["detalles"]["empresa"]}\n')
+            print(f' - Ubicación: {registro["detalles"]["ubicacion"]}\n')
+            print(f' - Requisitos:')
+            for requisito in registro["detalles"]["requisitos"]:
+                print(f"  * {requisito}")
+            print(f'\n - Descripción: {registro["detalles"]["descripcion"]}\n')
+            print(f' - Formación adicional:')
+            for formacion in registro["detalles"]["formacion_adicional"]:
+                print(f"  * {formacion}")
+            print("\n")
+
+
+        consola.pausa()
+        self.menuAdmin()

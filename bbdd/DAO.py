@@ -50,7 +50,7 @@ class DAO():
                 con_encriptada = response[1]
                 
                 con_desencriptada = f.decrypt(con_encriptada).decode()
-                print(con_desencriptada, con_ingresada)
+
                 if con_ingresada == con_desencriptada:
                     return response
                 else:

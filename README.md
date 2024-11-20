@@ -25,3 +25,13 @@ comercial 'inacap321'
 - Exportar datos JSON (menú API)
 	- link: https://elprofemiguel.com/APIS_JSON/requisitos_formacion_api.json
 
+id': 1, 
+'titulo': 'Vendedor/a de Tienda', 
+'detalles': 
+    {'tipo': 'Puesto Comercial', 
+     'empresa': 'Comercial XYZ', 
+     'ubicacion': 'Santiago', 
+    'requisitos': ['Título de educación media o equivalente', 'Experiencia previa en ventas', 'Habilidades de comunicación'],
+    'descripcion': 'Atender a clientes y promover productos en la tienda.', 
+    'formacion_adicional': ['Capacitación en atención al cliente', 'Conocimiento de productos']}
+}
