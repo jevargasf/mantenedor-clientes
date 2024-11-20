@@ -104,16 +104,12 @@ class Funciones():
 # Autenticación
     def iniciarSesion(self):
         # pedir nombre usuario (RUT)
-        while True:
-            try:
-                rut = input("Ingrese su RUT con puntos y guión. Ej: 11.111.111-1:\n")
-                if validaRut.valida(rut) == True:
-                    break
-                else:
-                    print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
-            except:
-                print("Error: Por favor, ingrese un rut válido.\n")
-        
+        rut = input("Ingrese su RUT con puntos y guión. Ej: 11.111.111-1:\n")
+        if validaRut.valida(rut) != True:
+            print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
+            consola.pausa()
+            self.menuInicio()
+
         if rut.find(".") != -1:
             rut_sin_puntos = rut.replace(".", "")
             rut_sin_guion = rut_sin_puntos.replace("-", "")
@@ -124,16 +120,17 @@ class Funciones():
         self.usuario.setNombreUsuario(rut_sin_guion)
         self.usuario.setContraseña(contraseña)
         respuesta = self.d.login(self.usuario)
-        
+        if respuesta is None:
+            print("Error: RUT y/o la contraseña incorrectos. Intente nuevamente.\n")
+            consola.pausa()
+            self.menuInicio()
         
         self.usuario.perfil.setNomPerfil(respuesta[3])
         if respuesta[2] == 1:
             self.menuAdmin()
         elif respuesta[2] == 2:
             self.menuComercial()
-        elif respuesta is None:
-            print("Error: RUT y/o la contraseña incorrectos. Intente nuevamente.\n")
-            consola.pausa()
+
         
     def cerrarSesion(self):
         print("Cerrando sesión...\n")
@@ -142,19 +139,15 @@ class Funciones():
 
 # Administración de clientes
     def registrarCliente(self):
-        while True:
-            try:
-                rut = input("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n")
-                if validaRut.valida(rut) == True:
-                    break
-                else:
-                    print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
-            except:
-                print("Error: Por favor, ingrese un rut válido.\n")
-        
-        if rut.find(".") != -1:
-            rut_sin_puntos = rut.replace(".", "")
-            rut_sin_guion = rut_sin_puntos.replace("-", "")
+        rut = input("Ingrese su RUT con puntos y guión. Ej: 11.111.111-1:\n")
+        if validaRut.valida(rut) != True:
+            print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
+            consola.pausa()
+            self.menuClientes()
+        elif validaRut.valida(rut) == True:
+            if rut.find(".") != -1:
+                rut_sin_puntos = rut.replace(".", "")
+                rut_sin_guion = rut_sin_puntos.replace("-", "")
        
         comprobar_cliente = self.d.comprobarRutCliente(rut_sin_guion)
 
@@ -225,17 +218,17 @@ class Funciones():
         self.menuClientes()
 
     def buscarCliente(self):
-        rut = validadores.validaString("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n", 11, 12, "Error: Por favor, ingrese RUT con puntos y guión.\n", "Error: Por favor, ingrese RUT con puntos y guión.")
-        if validaRut.valida(rut) == True:
+        rut = input("Ingrese su RUT con puntos y guión. Ej: 11.111.111-1:\n")
+        if validaRut.valida(rut) != True:
+            print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
+            consola.pausa()
+            self.menuClientes()
+        elif validaRut.valida(rut) == True:
             if rut.find(".") != -1:
                 rut_sin_puntos = rut.replace(".", "")
             if rut.find("-") != -1:
                 rut_sin_guion = rut_sin_puntos.replace("-", "")
             respuesta = self.d.consultarCliente(rut_sin_guion)
-        else:
-            consola.pausa()
-            print("Error: El RUT del cliente no es válido. Intente nuevamente.\n")
-            self.menuClientes()
 
         if respuesta is None:
             print("El cliente no está registrado en la base de datos. Intente nuevamente.\n")
@@ -254,22 +247,27 @@ class Funciones():
 
     def modificarCliente(self):
         # input de rut y comprobar cliente
-        # falta: que no se rompa el programa cuando se ingresa un rut que ya fue registrado en la bbdd pero fue deshabilitado
-        rut = validadores.validaString("Ingrese RUT del cliente que desea modificar con puntos y guión. Ej: 11.111.111-1:\n", 11, 12, "Error: Por favor, ingrese RUT con puntos y guión.\n", "Error: Por favor, ingrese RUT con puntos y guión.")
-        if validaRut.valida(rut) == True:
+        rut = input("Ingrese su RUT con puntos y guión. Ej: 11.111.111-1:\n")
+        if validaRut.valida(rut) != True:
+            print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
+            consola.pausa()
+            self.menuInicio()
+        elif validaRut.valida(rut) == True:
             if rut.find(".") != -1:
                 rut_sin_puntos = rut.replace(".", "")
             if rut.find("-") != -1:
                 rut_sin_guion = rut_sin_puntos.replace("-", "")
+            
             comprobar_cliente = self.d.comprobarRutCliente(rut_sin_guion)
             if comprobar_cliente is None:
-                print("Error: El RUT del cliente no existe. Por favor, intente nuevamente.")
+                print("Error: El RUT del cliente no existe. Por favor, intente nuevamente.\n")
+                consola.pausa()
+                self.menuClientes()
+            elif comprobar_cliente[1] == 0:
+                print("Error: El RUT del cliente fue eliminado de la base de datos.\n")
+                consola.pausa()
                 self.menuClientes()
             respuesta = self.d.consultarCliente(rut_sin_guion)
-        else:
-            consola.pausa()
-            print("Error: El RUT del cliente no es válido. Intente nuevamente.\n")
-            self.menuClientes()
 
         print(f"---- Datos cliente ----\n")
         print(f"1. RUT:{respuesta[0]}")
@@ -284,8 +282,12 @@ class Funciones():
         # pedir datos cliente
         if op == 1:
             # validar nuevo rut
-            nuevo_rut = validadores.validaString("Ingrese nuevo RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n", 11, 12, "Error: Por favor, ingrese RUT con puntos y guión.\n", "Error: Por favor, ingrese RUT con puntos y guión.")
-            if validaRut.valida(nuevo_rut) == True:
+            nuevo_rut = input("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n")
+            if validaRut.valida(nuevo_rut) != True:
+                print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
+                consola.pausa()
+                self.menuClientes()
+            elif validaRut.valida(nuevo_rut) == True:
                 # comprueba que no está registrado en la bbdd
                 nuevo_rut_sin_puntos = rut.replace(".", "")
                 nuevo_rut_sin_guion = nuevo_rut_sin_puntos.replace("-","")
@@ -295,10 +297,6 @@ class Funciones():
                     self.menuClientes()
                 else:
                     self.cliente.setRut(nuevo_rut_sin_guion)
-            else:
-                print("Error: El RUT del cliente no es válido. Intente nuevamente.\n")
-                consola.pausa()
-                self.menuClientes()
         elif op == 2:
             # validar nuevo valor
             nuevo_nom = validadores.validaString("Ingrese nuevo nombre del cliente:\n", 1, 50, "Error: El nombre debe tener entre 1 y 50 caracteres.", "Error: Por favor, ingrese un nombre válido.")
@@ -329,8 +327,12 @@ class Funciones():
         # cancelar la operación en todo momento?
 
     def eliminarCliente(self):
-        rut = validadores.validaString("Ingrese RUT del cliente que desea eliminar con puntos y guión. Ej: 11.111.111-1:\n", 11, 12, "Error: Por favor, ingrese RUT con puntos y guión.\n", "Error: Por favor, ingrese RUT con puntos y guión.")
-        if validaRut.valida(rut) == True:
+        rut = input("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n")
+        if validaRut.valida(rut) != True:
+            print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
+            consola.pausa()
+            self.menuClientes()
+        elif validaRut.valida(rut) == True:
             if rut.find(".") != -1:
                 rut_sin_puntos = rut.replace(".", "")
             if rut.find("-") != -1:
@@ -338,12 +340,12 @@ class Funciones():
             comprobar_cliente = self.d.comprobarRutCliente(rut_sin_guion)
             if comprobar_cliente is None:
                 print("Error: El RUT del cliente no existe. Por favor, intente nuevamente.")
+                consola.pausa()
                 self.menuClientes()
-        else:
-            print("Error: El RUT del cliente no es válido. Intente nuevamente.\n")
-            consola.pausa()
-            self.menuClientes()
-    
+            elif comprobar_cliente[1] == 0:
+                print("Error: El RUT del cliente fue eliminado de la base de datos.\n")
+                consola.pausa()
+                self.menuClientes()
         # mostrar datos cliente
         respuesta = self.d.consultarCliente(rut_sin_guion)
         print(f"---- Datos cliente ----\n")
@@ -551,28 +553,44 @@ class Funciones():
 
 # Administración de asignaciones
     def asignarCliente(self):
-        rut = validadores.validaString("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n", 11, 12, "Error: Por favor, ingrese RUT con puntos y guión.\n", "Error: Por favor, ingrese RUT con puntos y guión.")
-        while True:
-            try:
-                if validaRut.valida(rut) == True:
-                    break
-                else:
-                    print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
-            except:
-                print("Error: Por favor, ingrese un rut válido.\n")
+        rut = input("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n")
+        if validaRut.valida(rut) != True:
+            print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
+            consola.pausa()
+            self.menuAsignaciones()
+        elif validaRut.valida(rut) == True:
+            if rut.find(".") != -1:
+                rut_sin_puntos = rut.replace(".", "")
+                rut_sin_guion = rut_sin_puntos.replace("-", "")
 
-        rut_sin_puntos = rut.replace(".", "")
-        rut_sin_guion = rut_sin_puntos.replace("-","")
-        if self.d.comprobarRutCliente(rut_sin_guion) is None:
+        comprobar_cliente = self.d.comprobarRutCliente(rut_sin_guion)
+        if comprobar_cliente is None:
             print("Error: El RUT ingresado no existe. Por favor, intente nuevamente.\n")
             consola.pausa()
             self.menuAsignaciones()
-
+        elif comprobar_cliente[1] == 0:
+            print("Error: El cliente ya fue eliminado de la base de datos.\n")
+            consola.pausa()
+            self.menuAsignaciones()
         # Comprobar si cliente ya está asignado a sucursal
-        if self.d.comprobarAsignacion(id_cli) is not None:
+        pedir_id = self.d.consultarIdCliente(rut_sin_guion)
+        id_cli = pedir_id[0]
+        comprobar_asignacion = self.d.comprobarAsignacion(id_cli)
+        if comprobar_asignacion[0] == 1:
             print("Error: El cliente ya tiene una sucursal asignada. Por favor, intente nuevamente con otro cliente.\n")
             consola.pausa()
             self.menuAsignaciones()
+        elif comprobar_asignacion[0] == 0:
+            op = validadores.validaInt(f"El cliente poseía una asginación anteriormente en la {comprobar_asignacion[3]}, pero fue eliminada. ¿Desea reestablecerla?\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
+            if op == 1:
+                id_cli = comprobar_asignacion[1]
+                self.d.reestablecerAsginacion(id_cli)
+                consola.pausa()
+                self.menuAsignaciones()
+            elif op == 2:
+                print("Operación cancelada.")
+                consola.pausa()
+                self.menuAsignaciones()
 
         nom_suc = validadores.validaString("Ingrese nombre de la sucursal:\n", 1, 100, "Error: Nombre de sucursal debe tener entre 1 y 100. Por favor, ingrese nuevamente.\n", "Error: El nombre de la sucursal no puede superar los 100 caracteres.")
         if self.d.comprobarNombreSucursal(nom_suc) is None:
@@ -589,7 +607,7 @@ class Funciones():
 
         # Crear asignación 
         self.cliente_sucursal.cliente.setId(id_cli)
-        self.cliente_sucursal.sucursal.setid(id_suc)
+        self.cliente_sucursal.sucursal.setId(id_suc)
         self.d.asignarCliente(self.cliente_sucursal)
         
         self.menuAsignaciones()
@@ -610,7 +628,7 @@ class Funciones():
 
     def modificarAsignacion(self):
         # elegir cliente al que se quiere cambiar asignación
-        rut = validadores.validaString("Ingrese RUT del cliente que desea modificar con puntos y guión. Ej: 11.111.111-1:\n", 11, 12, "Error: Por favor, ingrese RUT con puntos y guión.\n", "Error: Por favor, ingrese RUT con puntos y guión.")
+        rut = input("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n")
         if validaRut.valida(rut) == True:
             if rut.find(".") != -1:
                 rut_sin_puntos = rut.replace(".", "")
@@ -618,15 +636,25 @@ class Funciones():
                 rut_sin_guion = rut_sin_puntos.replace("-", "")
             comprobar_cliente = self.d.comprobarRutCliente(rut_sin_guion)
             if comprobar_cliente is None:
-                print("Error: El RUT del cliente no existe. Por favor, intente nuevamente.")
-                self.menuClientes()
+                print("Error: El RUT del cliente no existe. Por favor, intente nuevamente.\n")
+                consola.pausa()
+                self.menuAsignaciones()
+            elif comprobar_cliente[1] == 0:
+                print("Error: El RUT del cliente fue eliminado de la base de datos.\n")
+                consola.pausa()
+                self.menuAsignaciones()
             id_cli = self.d.consultarIdCliente(rut_sin_guion)
         else:
             consola.pausa()
             print("Error: El RUT del cliente no es válido. Intente nuevamente.\n")
-            self.menuClientes()
+            self.menuAsignaciones()
+        
         
         respuesta = self.d.consultarAsginacion(id_cli)
+        if respuesta is None:
+            print("Error: El cliente fue eliminado de la base de datos. Intente nuevamente.\n")
+            consola.pausa()
+            self.menuAsignaciones()
         
         # mostrar asginación actual
         print("---- Asignación actual ----\n")
@@ -636,7 +664,7 @@ class Funciones():
         # pedir nombre sucursal a la que se quiere cambiar
         nom_suc = validadores.validaString("Ingrese nombre de la nueva sucursal a la que desea asignar al cliente:\n", 1, 100, "Error: Nombre de sucursal debe tener entre 1 y 100 caracteres. Por favor, ingrese nuevamente.\n", "Error: El nombre de la sucursal no puede superar los 100 caracteres.\n")
         id_nueva_suc = self.d.consultarIdSucursal(nom_suc)
-        id_asig = self.d.comprobarAsignacion(id_cli)
+        id_asig = self.d.consultarIdAsignacion(id_cli)
 
         self.cliente_sucursal.setId(id_asig)
         self.cliente_sucursal.cliente.setId(id_cli)

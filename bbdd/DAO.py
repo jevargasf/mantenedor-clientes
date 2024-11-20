@@ -279,7 +279,7 @@ class DAO():
 
     def comprobarAsignacion(self, id_cli):
         try:
-            sql = "select id_nub from nub where nub.id_cli=%s and est_asi = 1"
+            sql = "select est_asi, id_cli, nub.id_suc, nom_suc from nub inner join sucursales on nub.id_suc = sucursales.id_suc where nub.id_cli=%s"
             self.__conectar()
             self.cursor.execute(sql, id_cli)
             response = self.cursor.fetchone()
@@ -288,10 +288,22 @@ class DAO():
         except:
             print("Error en DAO: Error al consultar asignación.\n")
             consola.pausa()
+
+    def consultarIdAsignacion(self, id_cli):
+        try:
+            sql = "select id_nub from nub where id_cli=%s"
+            self.__conectar()
+            self.cursor.execute(sql, id_cli)
+            response = self.cursor.fetchone()
+            self.__desconectar()
+            return response
+        except:
+            print("Error en DAO: Error al consultar id de asignación.\n")
+            consola.pausa()
     
     def listarAsignaciones(self):
         try:
-            sql = "select clientes.nom_cli||' '||clientes.ap_pat, sucursales.nom_suc from nub inner join clientes on nub.id_cli = clientes.id_cli inner join sucursales on nub.id_suc = sucursales.id_suc where est_cli = 1 and est_suc = 1 and nub.est_asi = 1"
+            sql = "select concat(clientes.nom_cli,' ',clientes.ap_pat), sucursales.nom_suc from nub inner join clientes on nub.id_cli = clientes.id_cli inner join sucursales on nub.id_suc = sucursales.id_suc where est_cli = 1 and est_suc = 1 and nub.est_asi = 1"
             self.__conectar()
             self.cursor.execute(sql)
             response = self.cursor.fetchall()
@@ -303,7 +315,7 @@ class DAO():
 
     def consultarAsginacion(self, id_cli):
         try:
-            sql = "select clientes.nom_cli||' '||clientes.ap_pat, sucursales.nom_suc from nub inner join clientes on nub.id_cli = clientes.id_cli inner join sucursales on nub.id_suc = sucursales.id_suc where nub.id_cli = %s and clientes.est_cli = 1 and sucursales.est_suc = 1 and nub.est_asi = 1"
+            sql = "select concat(clientes.nom_cli,' ',clientes.ap_pat), sucursales.nom_suc from nub inner join clientes on nub.id_cli = clientes.id_cli inner join sucursales on nub.id_suc = sucursales.id_suc where nub.id_cli = %s and clientes.est_cli = 1 and sucursales.est_suc = 1 and nub.est_asi = 1"
             self.__conectar()
             self.cursor.execute(sql, id_cli)
             response = self.cursor.fetchone()
@@ -336,5 +348,16 @@ class DAO():
             self.connection.commit()
             self.__desconectar()
             print("Asignación eliminada exitosamente.")
+        except:
+            print("Error en DAO: Error al eliminar la asignación de cliente a sucursal.")
+
+    def reestablecerAsginacion(self, id_cli):
+        try:
+            sql = "update nub set est_asi = 1 where id_cli = %s and est_asi = 0"
+            self.__conectar()
+            self.cursor.execute(sql, id_cli)
+            self.connection.commit()
+            self.__desconectar()
+            print("Asignación reestrablecida exitosamente.")
         except:
             print("Error en DAO: Error al eliminar la asignación de cliente a sucursal.")

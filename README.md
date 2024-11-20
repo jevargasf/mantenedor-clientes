@@ -1,37 +1,32 @@
-Próximos pasos:
+- Menú login:
+	- Encriptación de contraseña con Fernet
+	- Enmascarado de contraseña con maskpass
+	
+- Menu administrador
+		- Gestión cliente: Agregar, Ver, Modificar, Deshabilitar
+		- Gestión sucursal: Agregar, Ver, Modificar, Deshabilitar
+		- Recuperar JSON: Pedir datos de ofertas laborales
+			link: https://elprofemiguel.com/APIS_JSON/requisitos_formacion_api.json
+		- Cerrar sesión
+	- Menu comercial
+		- Gestión asignaciones: Agregar, Ver, Modificar
+		- Cerrar sesión
 
-- Dejar funcional la P2
-	- Formatear datos en interfaz con beautifultable
+- Detalles:
+	Perfil Administrador:
+		Usuario: 18.038.889-3
+		Contraseña: inacap123
+	Perfil Comercial:
+		Usuario: 10.113.060-6
+		Contraseña: inacap321
 
-- Editar y eliminar registros
-	- eliminar sucursal (deshabilitar)
-
-- Menú login: 
-	- Estructura menús:
-		- Menu administrador
-			- Gestión cliente
-			- Gestión sucursal
-			- Recuperar JSON
-			- Cerrar sesión
-		- Menu comercial
-			- Gestión asignaciones
-			- Cerrar sesión
-	- Encriptación de contraseña -> modificar modelo de bbdd
-	- Enmascarar contraseña en interfaz de usuario: usar maskpass para usar asteriscos.
-admin 'inacap123'
-comercial 'inacap321'
-
-
-- Exportar datos JSON (menú API)
-	- link: https://elprofemiguel.com/APIS_JSON/requisitos_formacion_api.json
-
-id': 1, 
-'titulo': 'Vendedor/a de Tienda', 
-'detalles': 
-    {'tipo': 'Puesto Comercial', 
-     'empresa': 'Comercial XYZ', 
-     'ubicacion': 'Santiago', 
-    'requisitos': ['Título de educación media o equivalente', 'Experiencia previa en ventas', 'Habilidades de comunicación'],
-    'descripcion': 'Atender a clientes y promover productos en la tienda.', 
-    'formacion_adicional': ['Capacitación en atención al cliente', 'Conocimiento de productos']}
-}
+- Features adicionales:
+	- Módulo validadores: validador de datos enteros, strings y contraseña
+	- Módulo validador de rut usando algoritmo módulo 11
+	- Módulo funciones consola para controlar pausa y borrar consola en distintos sistemas operativos
+    - no se rompe el programa cuando se ingresa un rut que ya fue registrado en la bbdd pero fue deshabilitado
+	- si cliente ya existe: dos casos
+    - el rut se encuentra, pero el estado = 0, ¿desea volver a habilitarlo en la base de datos?
+    - comprueba si cliente ya está asignado a sucursal
+	- asginaciones cuando el cliente ya fue eliminado
+	- reconoce y reestablece cuando los registros ya fueron eliminados
