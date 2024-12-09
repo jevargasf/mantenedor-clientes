@@ -31,3 +31,70 @@
 	- asginaciones cuando el cliente ya fue eliminado
 	- reconoce y reestablece cuando los registros ya fueron eliminados
 	- Mostrar los registros como tabla
+
+P4:
+- CRUD de usuarios, perfil administrador
+	- Agregar usuario con contraseña encriptada*
+	- Listar usuarios
+	- Modificar usuario
+	- Dar de baja usuario
+	- No es necesario agregar otro perfil adicional, con los dos perfiles que existen es suficiente.
+- Escribir pruebas unitarias automatizadas
+
+- Debug antes de entregar:
+	- revisar si todas las funciones donde pide el RUT se quiebran cuando se ingresa un rut no
+	válido (si no continúa la ejecución de la función con un rut vacío)
+	- revisar si el programa corre en un nuevo entorno y con una bbdd nueva desde cero
+	- se puede mejorar el programa almacenando todos los string como mayúsculas y comparando
+	con los inputs también como mayúsculas, porque también es posible quebrar el programa
+	si no ingreso un nombre EXACTAMENTE igual
+	¿y con los ruts puede pasar? no, porque ya tengo el validador de rut y los clientes
+	los identifico con rut. Entonces esta validación es crítica SOLO EN EL CASO DE LAS
+	SUCURSALES
+	- además, si quedo metido en un bucle while, no puedo salir con ctrl+c, el programa
+	se puede mejorar dando la posibilidad de salir con algún comando. De hecho, cuando
+	ejecuto con F5, el programa se puede interrumpir, pero si ejecuto directamente desde
+	la consola, el programa no es posible interrumpirlo ya que no escribí esa funcionalidad
+
+Pruebas:
+	Clientes:
+		✓ Crear un nuevo registro, equivocarse en crear un nuevo registro
+		✓ Ver nuevo registro, equivocarse en pedir
+		✓ Modificar registro, equivocarse en modificar
+		✓ Buscar nuevo registro, equivocarse en buscar
+		✓ Eliminar nuevo registro, equivocarse en eliminar
+		✓ Pedir agregar cilente eliminado
+		✓ Pedir modificar cilente eliminado
+	Sucursales:
+		✓ Crear nueva sucursal, equivocarse en crear un nuevo registro
+		✓ Ver nueva sucursal, equivocarse en pedir
+		✓ Buscar sucursal, equivocarse en buscar
+		✓ Modificar nueva sucursal, equivocarse en modificar
+		✓ Eliminar nueva sucursal, equivocarse en eliminar
+		✓ Pedir agregar sucursal eliminada
+		✓ Pedir modificar sucursal eliminada
+	Asignaciones:
+		- Crear nueva asginación, equivocarse en crear nueva asginación
+		primero,  ¿el rut ingresado es correcto?
+			si no, salir
+		segundo, ¿hay clientes para asignar?
+			si no, salir
+		tercero, ¿el cliente ingresado existe?
+			si no, salir
+		cuarto, ¿hay sucursales para asignar?
+			si no, salir
+		quinto, ¿el nombre de la sucursal es válido para ir a buscarlo?
+			si no, loop
+		sexto, ¿la sucursal ingresada existe?
+			si no, salir
+		séptimo, ¿el cliente ya tiene una sucursal asignada?
+			si es así, imprimir y salir
+		- Ver nueva asginación, equivocarse en pedir
+		- Modificar nueva asginación, equivocarse en modificar
+		- Eliminar nueva asginación, equivocarse en eliminar
+		- Pedir agregar asginación eliminada
+		- Pedir modificar asginación eliminada	
+	JSON:
+		- mejorar la impresión usando tabla
+		
+		

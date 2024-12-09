@@ -151,7 +151,6 @@ class DAO():
             self.connection.commit()
             self.__desconectar()
             print("Cliente modificado exitosamente.")
-            consola.pausa()
         except:
             print("Error en DAO: Error al modificar cliente.")
             consola.pausa()
@@ -201,6 +200,7 @@ class DAO():
             self.__conectar()
             self.cursor.execute(sql, nombre)
             response = self.cursor.fetchone()
+            print(response)
             self.__desconectar()
             return response
         except:
@@ -362,3 +362,6 @@ class DAO():
             print("Asignación reestrablecida exitosamente.")
         except:
             print("Error en DAO: Error al eliminar la asignación de cliente a sucursal.")
+
+# CRUD usuarios
+    # acá las funciones de (al menos) agregar usuario
