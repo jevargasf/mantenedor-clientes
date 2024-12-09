@@ -55,6 +55,13 @@ P4:
 	se puede mejorar dando la posibilidad de salir con algún comando. De hecho, cuando
 	ejecuto con F5, el programa se puede interrumpir, pero si ejecuto directamente desde
 	la consola, el programa no es posible interrumpirlo ya que no escribí esa funcionalidad
+	- algo que mejorar, es que cuando se elimine una sucursal, también se eliminen sus
+	asignaciones, si es que la sucursal está involucrada en una
+	- otra cosa que mejorar, es que cuando se elimine un cliente, también se elimine
+	su asignación
+	- y si le vuelvo a asignar una sucursal a un cliente y repongo la sucursal eliminada,
+	¿se repone la asignación? No debería. Toda sucursal eliminada pasa a tener asignación
+	eliminada. Si la persona quiere reponer la asignación, debe hacerlo manualmente.
 
 Pruebas:
 	Clientes:
@@ -74,24 +81,44 @@ Pruebas:
 		✓ Pedir agregar sucursal eliminada
 		✓ Pedir modificar sucursal eliminada
 	Asignaciones:
-		- Crear nueva asginación, equivocarse en crear nueva asginación
-		primero,  ¿el rut ingresado es correcto?
+		✓ Crear nueva asginación, equivocarse en crear nueva asginación
+		primero, ¿hay clientes para asignar? (len(todos los clientes) distinto de cero)
 			si no, salir
-		segundo, ¿hay clientes para asignar?
+		segundo, ¿el rut ingresado es correcto?
 			si no, salir
-		tercero, ¿el cliente ingresado existe?
+		tercero, ¿el cliente ingresado existe? ¿el cliente coincide con un rut de la bbdd?
 			si no, salir
-		cuarto, ¿hay sucursales para asignar?
+		cuarto, el cliente coincide con un rut de la bbdd, ¿pero está habilitado? (est=1)
 			si no, salir
-		quinto, ¿el nombre de la sucursal es válido para ir a buscarlo?
+		quinto, ¿hay sucursales para asignar?
+			si no, salir
+		sexto, ¿el nombre de la sucursal es válido para ir a buscarlo?
 			si no, loop
-		sexto, ¿la sucursal ingresada existe?
+		séptimo, ¿la sucursal ingresada existe?
 			si no, salir
-		séptimo, ¿el cliente ya tiene una sucursal asignada?
+		octavo, ¿el cliente ya tiene una sucursal asignada?
 			si es así, imprimir y salir
-		- Ver nueva asginación, equivocarse en pedir
-		- Modificar nueva asginación, equivocarse en modificar
-		- Eliminar nueva asginación, equivocarse en eliminar
+			si no, pedir datos para asignar
+		✓ Ver asginaciones
+		✓ Modificar asginación, equivocarse en modificar
+		primero, ¿existen asignaciones para modificar?
+			si no, salir
+		segundo, ¿el rut ingresado es correcto?
+			si no, salir
+		tercero, ¿el cliente ingresado existe? ¿el cliente coincide con un rut de la bbdd?
+			si no, salir
+		cuarto, el cliente coincide con un rut de la bbdd, ¿pero está habilitado?
+			si no, salir
+		quinto, ¿el cliente tiene asignación?
+			si no, salir
+		sexto, ¿la asignación del cliente está habilitada?
+			si no, ofrecer reponerla
+		séptimo, si tiene asignación y está habilitada, ofrecer modificarla
+		
+		> validaciones de la nueva sucursal
+		que sea una sucursal existente
+		
+		
 		- Pedir agregar asginación eliminada
 		- Pedir modificar asginación eliminada	
 	JSON:

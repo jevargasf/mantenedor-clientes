@@ -170,8 +170,8 @@ class DAO():
 # CRUD Sucursales
     def agregarSucursal(self, suc: Sucursal):
         try:
-            sql = "insert into sucursales(nom_suc, dir_suc, fec_con) values(%s,%s,%s)"
-            valores = (suc.getNombre(), suc.getDireccion(), suc.getFechaConstitucion())
+            sql = "insert into sucursales(nom_suc, dir_suc, fec_con, est_suc) values(%s,%s,%s,%s)"
+            valores = (suc.getNombre(), suc.getDireccion(), suc.getFechaConstitucion(), suc.getEstado())
             self.__conectar()
             self.cursor.execute(sql, valores)
             self.connection.commit()
@@ -266,8 +266,8 @@ class DAO():
 # CRUD Asignaciones
     def asignarCliente(self, asig: ClienteSucursal):
         try:
-            sql = "insert into nub(id_cli, id_suc) values(%s,%s)"
-            valores = (asig.cliente.getId(), asig.sucursal.getId())
+            sql = "insert into nub(id_cli, id_suc, est_asi) values(%s,%s,%s)"
+            valores = (asig.cliente.getId(), asig.sucursal.getId(), asig.getEstadoAsignacion())
             self.__conectar()
             self.cursor.execute(sql, valores)
             self.connection.commit()

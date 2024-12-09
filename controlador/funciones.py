@@ -159,6 +159,7 @@ class Funciones():
                 return self.menuClientes()
         except:
             print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
+            consola.pausa()
 
         comprobar_cliente = self.d.comprobarRutCliente(rut_sin_guion)
 
@@ -608,81 +609,108 @@ class Funciones():
 
 # Administración de asignaciones
     def asignarCliente(self):
-        try:
-            rut = input("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n")
-            if validaRut.valida(rut) == True:
-                if rut.find(".") != -1:
-                    rut_sin_puntos = rut.replace(".", "")
-                    rut_sin_guion = rut_sin_puntos.replace("-", "")
-            else:
+        # ¿hay clientes para asignar? ¿hay sucursales para asignar? 
+        respuesta_clientes = self.d.listarClientes()
+        respuesta_sucursales = self.d.listarSucursales()
+        if (respuesta_clientes is None or len(respuesta_clientes) == 0) or (respuesta_sucursales is None or len(respuesta_sucursales) == 0):
+            print("No hay registros suficientes en la base de datos para realizar asignaciones\n")
+            consola.pausa()
+            return self.menuAsignaciones()
+        else:
+        # pedir rut, ¿el rut ingresado es correcto?
+            try:
+                rut = input("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n")
+                # el rut es válido
+                if validaRut.valida(rut) == True:
+                    if rut.find(".") != -1:
+                        rut_sin_puntos = rut.replace(".", "")
+                        rut_sin_guion = rut_sin_puntos.replace("-", "")
+                # el rut no es válido, salir
+                else:
+                    print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
+                    consola.pausa()
+                    return self.menuAsignaciones()
+            # el rut no es válido, interrumpir
+            except:
                 print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
                 consola.pausa()
-                return self.menuAsignaciones()
-        except:
-            print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
-
+        # ¿el cliente coincide con un rut de la bbdd? (¿el cliente existe?)
         comprobar_cliente = self.d.comprobarRutCliente(rut_sin_guion)
-        # Condición: El cliente no existe -> Error
-        # Condición: El cliente existe y no está habilitado -> Error
-        # Condición: El cliente existe y está habilitado -> Seguir
-        if comprobar_cliente is None:
-            print("Error: El RUT ingresado no existe. Por favor, intente nuevamente.\n")
-            consola.pausa()
-            self.menuAsignaciones()
-        elif comprobar_cliente[1] == 0:
-            print("Error: El cliente ya fue eliminado de la base de datos.\n")
-            consola.pausa()
-            self.menuAsignaciones()
-        # Comprobar si cliente ya está asignado a sucursal
-        pedir_id = self.d.consultarIdCliente(rut_sin_guion)
-        id_cli = pedir_id[0]
-        comprobar_asignacion = self.d.comprobarAsignacion(id_cli)
-        print(comprobar_asignacion)
-        # Condición: No existe una asignación. Consulta = None
-        
-        # Condición: Ya existe una asignación y Estado asignación = habilitado
-        if comprobar_asignacion[0] == 1:
-            print("Error: El cliente ya tiene una sucursal asignada. Por favor, intente nuevamente con otro cliente.\n")
-            consola.pausa()
-            self.menuAsignaciones()
-        # Condición: Ya existe una asignación, pero estado sucursal = deshabilitado
-        elif comprobar_asignacion[0] == 0 and comprobar_asignacion[5] == 0:
-            # Ingrese nombre de la sucursal que desea asignar
-            print("Error: El cliente poseía una asignación anteriormente, pero la sucursal fue eliminada.")
-            consola.pausa()
-
-        # Condición: Ya existe una asignación, Estado asignación = deshabilitado y estado sucursal = habilitado
-        elif comprobar_asignacion[0] == 0 and comprobar_asignacion[5] == 1:
-            op = validadores.validaInt(f"El cliente poseía una asginación anteriormente en la {comprobar_asignacion[4]}, pero fue eliminada. ¿Desea reestablecerla?\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
-            if op == 1:
-                id_cli = comprobar_asignacion[1]
-                self.d.reestablecerAsginacion(id_cli)
+        # dio como respuesta un rut registrado en la base de datos
+        if comprobar_cliente is not None:
+            # el rut existe, pero fue eliminado
+            if comprobar_cliente[0] == rut_sin_guion and comprobar_cliente[1] == 0:
+                print("Error: El cliente ya fue eliminado de la base de datos. Por favor, intente nuevamente.\n")
                 consola.pausa()
-                self.menuAsignaciones()
-            elif op == 2:
-                print("Operación cancelada.")
-                consola.pausa()
-                self.menuAsignaciones()
+                return self.menuAsignaciones()
+            # el rut existe y está habilitado
+            elif comprobar_cliente[0] == rut_sin_guion and comprobar_cliente[1] == 1:
+                # Comprobar si cliente ya está asignado a sucursal
+                pedir_id = self.d.consultarIdCliente(rut_sin_guion)
+                id_cli = pedir_id[0]
+                comprobar_asignacion = self.d.comprobarAsignacion(id_cli)
+                print(comprobar_asignacion)
+                # Sí existe una asignación para ese cliente
+                if comprobar_asignacion is not None:
+                    # la asignación está habilitada
+                    if comprobar_asignacion[0] == 1:
+                        print("Error: El cliente ya tiene una sucursal asignada. Por favor, intente nuevamente con otro cliente.\n")
+                        consola.pausa()
+                        return self.menuAsignaciones()
+                    # Ya existe una asignación, pero estado sucursal = deshabilitado
+                    elif comprobar_asignacion[0] == 0 and comprobar_asignacion[5] == 0:
+                        op = validadores.validaInt(f"El cliente poseía una asignación anteriormente, pero su sucursal fue eliminada. ¿Desea asignar nueva sucursal al cliente?\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
+                        if op == 1:
+                            print("Se le solicitarán los datos para una nueva asignación")
+                            consola.pausa()
+                        elif op == 2:
+                            print("Operación cancelada.")
+                            consola.pausa()
+                            return self.menuAsignaciones()
+                    # Ya existe una asignación, pero fue eliminada y la sucursal sigue habilitada
+                    elif comprobar_asignacion[0] == 0 and comprobar_asignacion[5] == 1:
+                        op = validadores.validaInt(f"El cliente poseía una asginación anteriormente en {comprobar_asignacion[4]}. ¿Desea reestablecerla?\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
+                        if op == 1:
+                            id_cli = comprobar_asignacion[1]
+                            self.d.reestablecerAsginacion(id_cli)
+                            consola.pausa()
+                            return self.menuAsignaciones()
+                        elif op == 2:
+                            print("Operación cancelada.")
+                            consola.pausa()
+                            return self.menuAsignaciones()
+                # la respuesta de consultar asignación es None (no hay asignaciones para ese rut)
+                else:
+                    print("Se le solicitarán los datos para una crear asignación")
+                    consola.pausa()
+        # el rut ingresado es válido, pero no coincide con ningún registro de la bbdd
+        else:
+            print("Error: El RUT ingresado no está registrado en la base de datos. Por favor, intente nuevamente.\n")
+            consola.pausa()
+            return self.menuAsignaciones()
 
-        nom_suc = validadores.validaString("Ingrese nombre de la sucursal:\n", 1, 100, "Error: Nombre de sucursal debe tener entre 1 y 100. Por favor, ingrese nuevamente.\n", "Error: El nombre de la sucursal no puede superar los 100 caracteres.")
-        if self.d.comprobarNombreSucursal(nom_suc) is None:
+        # ¿el nombre de sucursal ingresado es válido?
+        nom_suc = validadores.validaString("Ingrese nombre de la sucursal que desea asignar:\n", 1, 100, "Error: Nombre de sucursal debe tener entre 1 y 100. Por favor, ingrese nuevamente.\n", "Error: El nombre de la sucursal no puede superar los 100 caracteres.")
+        # ¿la sucursal ingresada existe?
+        comprobar_sucursal = self.d.comprobarNombreSucursal(nom_suc)
+        if comprobar_sucursal is None:
             print("Error: El nombre de la sucursal no existe. Por favor, intente nuevamente.")
             consola.pausa()
-            self.menuAsignaciones()
+            return self.menuAsignaciones()
+        else:
+            # Buscar id cliente por rut
+            respuesta_cli = self.d.consultarIdCliente(rut_sin_guion)
+            id_cli = respuesta_cli[0]
+            # Buscar id sucursal por nombre
+            respuesta_suc = self.d.consultarIdSucursal(nom_suc)
+            id_suc = respuesta_suc[0]
 
-        # Buscar id cliente por rut
-        respuesta_cli = self.d.consultarIdCliente(rut_sin_guion)
-        id_cli = respuesta_cli[0]
-        # Buscar id sucursal por nombre
-        respuesta_suc = self.d.consultarIdSucursal(nom_suc)
-        id_suc = respuesta_suc[0]
-
-        # Crear asignación 
-        self.cliente_sucursal.cliente.setId(id_cli)
-        self.cliente_sucursal.sucursal.setId(id_suc)
-        self.d.asignarCliente(self.cliente_sucursal)
-        
-        self.menuAsignaciones()
+            # Crear asignación 
+            self.cliente_sucursal.cliente.setId(id_cli)
+            self.cliente_sucursal.sucursal.setId(id_suc)
+            self.cliente_sucursal.setEstadoAsignacion(1)
+            self.d.asignarCliente(self.cliente_sucursal)
+            return self.menuAsignaciones()
 
     def verAsignaciones(self):
         response = self.d.listarAsignaciones()
@@ -701,56 +729,106 @@ class Funciones():
         self.menuAsignaciones()
 
     def modificarAsignacion(self):
-        # elegir cliente al que se quiere cambiar asignación
-        try:
-            rut = input("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n")
-            if validaRut.valida(rut) == True:
-                if rut.find(".") != -1:
-                    rut_sin_puntos = rut.replace(".", "")
-                if rut.find("-") != -1:
-                    rut_sin_guion = rut_sin_puntos.replace("-", "")
-                comprobar_cliente = self.d.comprobarRutCliente(rut_sin_guion)
-                if comprobar_cliente is None:
-                    print("Error: El RUT del cliente no existe. Por favor, intente nuevamente.\n")
+        # ¿existen asignaciones para modificar?
+        response = self.d.listarAsignaciones()
+        if response is None or len(response) == 0:
+            print("No hay asginaciones registradas en la base de datos.\n")
+            consola.pausa()
+            return self.menuAsignaciones()
+        else:
+        # sí hay asignaciones para modificar
+        # pedir rut, ¿el rut ingresado es correcto?
+            try:
+                rut = input("Ingrese RUT del cliente que desea modificar con puntos y guión. Ej: 11.111.111-1:\n")
+                # el rut es válido
+                if validaRut.valida(rut) == True:
+                    if rut.find(".") != -1:
+                        rut_sin_puntos = rut.replace(".", "")
+                        rut_sin_guion = rut_sin_puntos.replace("-", "")
+                # el rut no es válido, salir
+                else:
+                    print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
                     consola.pausa()
-                    self.menuAsignaciones()
-                elif comprobar_cliente[1] == 0:
-                    print("Error: El RUT del cliente fue eliminado de la base de datos.\n")
-                    consola.pausa()
-                    self.menuAsignaciones()
-                id_cli = self.d.consultarIdCliente(rut_sin_guion)
-            else:
+                    return self.menuAsignaciones()
+            # el rut no es válido, interrumpir
+            except:
                 print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
                 consola.pausa()
+
+            # ¿el cliente ingresado existe?
+            comprobar_cliente = self.d.comprobarRutCliente(rut_sin_guion)
+            if comprobar_cliente is not None:
+                # el rut existe, pero fue eliminado
+                if comprobar_cliente[0] == rut_sin_guion and comprobar_cliente[1] == 0:
+                    print("Error: El cliente ya fue eliminado de la base de datos. Por favor, intente nuevamente.\n")
+                    consola.pausa()
+                    return self.menuAsignaciones()
+                # el rut existe y está habilitado
+                elif comprobar_cliente[0] == rut_sin_guion and comprobar_cliente[1] == 1:
+                    # Comprobar si cliente tiene asignación
+                    pedir_id = self.d.consultarIdCliente(rut_sin_guion)
+                    id_cli = pedir_id[0]
+                    comprobar_asignacion = self.d.comprobarAsignacion(id_cli)
+                    print(comprobar_asignacion)
+                    # Sí existe una asignación para ese cliente
+                    if comprobar_asignacion is not None:
+                        # la asignación está habilitada
+                        if comprobar_asignacion[0] == 1:
+                            # Modificar asignación
+                            datos_asignacion = self.d.consultarAsginacion(id_cli)
+                            # mostrar asginación actual
+                            print("---- Asignación actual ----\n")
+                            print(f"Cliente: {datos_asignacion[0]}")
+                            print(f"Sucursal: {datos_asignacion[1]}\n")
+
+                            # pedir nombre sucursal a la que se quiere cambiar
+                            # ¿el nombre de sucursal ingresado es válido?
+                            nom_suc = validadores.validaString("Ingrese nombre de la nueva sucursal a la que desea asignar al cliente:\n", 1, 100, "Error: Nombre de sucursal debe tener entre 1 y 100 caracteres. Por favor, ingrese nuevamente.\n", "Error: El nombre de la sucursal no puede superar los 100 caracteres.\n")
+                            # ¿la sucursal ingresada existe?
+                            id_nueva_suc = self.d.consultarIdSucursal(nom_suc)
+                            if id_nueva_suc is not None:
+
+                                id_asig = self.d.consultarIdAsignacion(id_cli)
+
+                                self.cliente_sucursal.setId(id_asig)
+                                self.cliente_sucursal.cliente.setId(id_cli)
+                                self.cliente_sucursal.sucursal.setId(id_nueva_suc)
+                                self.d.editarAsignacion(self.cliente_sucursal)
+
+                                return self.menuAsignaciones()
+                            # ingresó nombre no existente de sucursal
+                            else:
+                                print("La sucursal ingresada no existe. Por favor, intente nuevamente.\n")
+                                consola.pausa()
+                                return self.menuAsignaciones()
+                        # Ya existe una asignación, pero estado sucursal = deshabilitado
+                        # esto no debería pasar porque toda sucursal deshabilitada también deshabilita su asignación
+                        elif comprobar_asignacion[0] == 0 and comprobar_asignacion[5] == 0:
+                            print("Error: El cliente poseía una asignación anteriormente, pero su sucursal fue eliminada. Intente creando una nueva asignación.")
+                            consola.pausa()
+                            return self.menuAsignaciones()
+                        # Ya existe una asignación, pero fue eliminada y la sucursal sigue habilitada
+                        elif comprobar_asignacion[0] == 0 and comprobar_asignacion[5] == 1:
+                            op = validadores.validaInt(f"El cliente poseía una asginación anteriormente en {comprobar_asignacion[4]}. ¿Desea reestablecerla?\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
+                            if op == 1:
+                                id_cli = comprobar_asignacion[1]
+                                self.d.reestablecerAsginacion(id_cli)
+                                consola.pausa()
+                                return self.menuAsignaciones()
+                            elif op == 2:
+                                print("Operación cancelada.")
+                                consola.pausa()
+                                return self.menuAsignaciones()
+                    # la respuesta de consultar asignación es None (no hay asignaciones para ese rut)
+                    else:
+                        print("Error: El cliente no está asginado a una sucursal.")
+                        consola.pausa()
+                        return self.menuAsignaciones()
+            # el rut ingresado es válido, pero no coincide con ningún registro de la bbdd
+            else:
+                print("Error: El RUT ingresado no está registrado en la base de datos. Por favor, intente nuevamente.\n")
+                consola.pausa()
                 return self.menuAsignaciones()
-        except:
-            print("Error: El RUT del cliente no es válido. Intente nuevamente.\n")
-            consola.pausa()
-        
-        
-        respuesta = self.d.consultarAsginacion(id_cli)
-        if respuesta is None:
-            print("Error: El cliente fue eliminado de la base de datos. Intente nuevamente.\n")
-            consola.pausa()
-            self.menuAsignaciones()
-        
-        # mostrar asginación actual
-        print("---- Asignación actual ----\n")
-        print(f"Cliente: {respuesta[0]}")
-        print(f"Sucursal: {respuesta[1]}\n")
-
-        # pedir nombre sucursal a la que se quiere cambiar
-        nom_suc = validadores.validaString("Ingrese nombre de la nueva sucursal a la que desea asignar al cliente:\n", 1, 100, "Error: Nombre de sucursal debe tener entre 1 y 100 caracteres. Por favor, ingrese nuevamente.\n", "Error: El nombre de la sucursal no puede superar los 100 caracteres.\n")
-        id_nueva_suc = self.d.consultarIdSucursal(nom_suc)
-        id_asig = self.d.consultarIdAsignacion(id_cli)
-
-        self.cliente_sucursal.setId(id_asig)
-        self.cliente_sucursal.cliente.setId(id_cli)
-        self.cliente_sucursal.sucursal.setId(id_nueva_suc)
-        self.d.editarAsignacion(self.cliente_sucursal)
-
-        self.menuAsignaciones()
-
 
 # JSON
     def recuperarJson(self):
