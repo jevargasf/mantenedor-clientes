@@ -43,7 +43,7 @@ P4:
 - Debug antes de entregar:
 	✓ revisar si todas las funciones donde pide el RUT se quiebran cuando se ingresa un rut no
 	válido (si no continúa la ejecución de la función con un rut vacío)
-	- revisar si el programa corre en un nuevo entorno y con una bbdd nueva desde cero
+	✓ revisar si el programa corre en un nuevo entorno y con una bbdd nueva desde cero
 	- se puede mejorar el programa almacenando todos los string como mayúsculas y comparando
 	con los inputs también como mayúsculas, porque también es posible quebrar el programa
 	si no ingreso un nombre EXACTAMENTE igual
@@ -61,7 +61,7 @@ P4:
 	✓ y si le vuelvo a asignar una sucursal a un cliente y repongo la sucursal eliminada,
 	¿se repone la asignación? No debería. Toda sucursal eliminada pasa a tener asignación
 	eliminada. Si la persona quiere reponer la asignación, debe hacerlo manualmente.
-	- probar en un pc de inacap
+	✓ probar en un pc de inacap
 
 Pruebas:
 	Clientes:
