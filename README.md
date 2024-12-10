@@ -61,6 +61,7 @@ P4:
 	✓ y si le vuelvo a asignar una sucursal a un cliente y repongo la sucursal eliminada,
 	¿se repone la asignación? No debería. Toda sucursal eliminada pasa a tener asignación
 	eliminada. Si la persona quiere reponer la asignación, debe hacerlo manualmente.
+	- probar en un pc de inacap
 
 Pruebas:
 	Clientes:

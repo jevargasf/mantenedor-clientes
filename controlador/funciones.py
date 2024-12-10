@@ -284,7 +284,6 @@ class Funciones():
             if op == 1:
                 self.cliente.setRut(rut_sin_guion)
                 self.cliente.setEstado(1)
-                print(self.cliente.getRut(), self.cliente.getEstado())
                 self.d.modificarEstadoCliente(self.cliente)
                 print("El registro del cliente fue reestablecido exitosamente.\n")
                 consola.pausa()
@@ -734,7 +733,6 @@ class Funciones():
                 pedir_id = self.d.consultarIdCliente(rut_sin_guion)
                 id_cli = pedir_id[0]
                 comprobar_asignacion = self.d.comprobarAsignacion(id_cli)
-                print(comprobar_asignacion)
                 # Sí existe una asignación para ese cliente
                 if comprobar_asignacion is not None:
                     # la asignación está habilitada
@@ -813,7 +811,6 @@ class Funciones():
         if response is None or len(response) == 0:
             print("No hay clientes asginados a sucursales actualmente.\n")
         else:
-            print(response)
             table = BeautifulTable()
             table.columns.header = ["N°", "Nombre Cliente", "Sucursal"]
             for x, asignaciones in enumerate(response):
@@ -864,7 +861,6 @@ class Funciones():
                     pedir_id = self.d.consultarIdCliente(rut_sin_guion)
                     id_cli = pedir_id[0]
                     comprobar_asignacion = self.d.comprobarAsignacion(id_cli)
-                    print(comprobar_asignacion)
                     # Sí existe una asignación para ese cliente
                     if comprobar_asignacion is not None:
                         # la asignación está habilitada

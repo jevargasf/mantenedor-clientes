@@ -1,7 +1,7 @@
 create table perfiles(
 	id_per int primary key auto_increment,
     nom_per varchar(50),
-    est_per bool
+    est_per boolean
 );
 
 create table sucursales(
@@ -9,14 +9,14 @@ create table sucursales(
     nom_suc varchar(100),
     dir_suc varchar(200),
     fec_con date,
-    est_suc bool
+    est_suc boolean
 );
 
 create table usuarios(
 	id_usu int primary key auto_increment,
 	nom_usu varchar(50),
 	con_usu varchar(100),
-    est_usu bool,
+    est_usu boolean,
     id_per int,
     foreign key(id_per) references perfiles(id_per)
 );
@@ -30,14 +30,14 @@ create table clientes(
     eda_cli int,
     tel_cli varchar(9),
     pag_cli varchar(10),
-    est_cli bool
+    est_cli boolean
 );
 
 create table nub(
 	id_nub int primary key auto_increment,
     id_cli int,
     id_suc int,
-    est_asi bool,
+    est_asi boolean,
     foreign key(id_cli) references clientes(id_cli),
     foreign key(id_suc) references sucursales(id_suc)
 );
@@ -45,5 +45,5 @@ create table nub(
 insert into perfiles (id_per, nom_per, est_per) values (1, "administrador", 1);
 insert into perfiles (id_per, nom_per, est_per) values (2, "comercial", 1);
 
-insert into usuarios values (1, "180388893", "gAAAAABnPJP4OicyuB8DfaxoobTeyOWEr-BmwIchwTY8JFPmYVsTKtMMnHMFqBEyCIaEVJNwV6QNzK-Jqj3-jBBLdOk6INnRPw==", 1, 1)
-insert into usuarios values (2, "101130606","gAAAAABnPJP4y03M07lYrJUty_q_bsiXVzxc_IJCPLzQwnqqg7TUcKVwHojDossoEwnzXLjuuG-xoMeb_6eo5dBQbC-45z1GqQ==", 2, 1)
+insert into usuarios values (1, "180388893", "gAAAAABnPJP4OicyuB8DfaxoobTeyOWEr-BmwIchwTY8JFPmYVsTKtMMnHMFqBEyCIaEVJNwV6QNzK-Jqj3-jBBLdOk6INnRPw==", 1, 1);
+insert into usuarios values (2, "101130606","gAAAAABnPJP4y03M07lYrJUty_q_bsiXVzxc_IJCPLzQwnqqg7TUcKVwHojDossoEwnzXLjuuG-xoMeb_6eo5dBQbC-45z1GqQ==", 2, 1);

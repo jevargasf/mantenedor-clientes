@@ -1,0 +1,5 @@
+beautifultable==1.1.0
+cryptography==43.0.3
+maskpass==0.3.7
+PyMySQL==1.1.1
+requests==2.32.3

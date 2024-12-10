@@ -18,10 +18,7 @@ class DAO():
                 password = "",
                 db = "bd_gestion"
             )
-            self.cursor = self.connection.cursor()
-            
-            #print("Conexión a la base de datos establecida correctamente.")
-            #self.pause()
+            self.cursor = self.connection.cursor()            
         except:
             print("Error en DAO: Error en la conexión a la base de datos.")
             consola.pausa()
@@ -34,7 +31,6 @@ class DAO():
         try:
             self.__conectar()
             sql = "select usuarios.nom_usu, usuarios.con_usu, usuarios.id_per, perfiles.nom_per, usuarios.est_usu from usuarios inner join perfiles on usuarios.id_per = perfiles.id_per where usuarios.nom_usu = %s"
-            print(usu.getNombreUsuario())
             self.cursor.execute(sql, usu.getNombreUsuario())
             response = self.cursor.fetchone()
             self.__desconectar()
@@ -64,7 +60,6 @@ class DAO():
         try:
             sql = "insert into clientes(rut_cli, nom_cli, ap_pat, ap_mat, eda_cli, tel_cli, pag_cli, est_cli) values(%s, %s, %s, %s, %s, %s, %s, %s)"
             valores = (cli.getRut(), cli.getNombre(), cli.getApPaterno(), cli.getApMaterno(), cli.getEdad(), cli.getTelefono(), cli.getFormaPago(), cli.getEstado())
-            print(valores)
             self.__conectar()
             self.cursor.execute(sql, valores)
             self.connection.commit()
@@ -200,7 +195,6 @@ class DAO():
             self.__conectar()
             self.cursor.execute(sql, nombre)
             response = self.cursor.fetchone()
-            print(response)
             self.__desconectar()
             return response
         except:
