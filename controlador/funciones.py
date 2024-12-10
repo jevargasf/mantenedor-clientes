@@ -579,7 +579,7 @@ class Funciones():
                 print("Error: La sucursal ya fue eliminada de la base de datos. Por favor, con otra sucursal.")
                 consola.pausa()
                 return self.menuSucursales()
-            # elif el nombre de la sucursal ya existe, pero estado = 0, ¿desea volver a habilitarla?
+            # elif el nombre de la sucursal existe, pero estado = 1, ¿desea eliminarla?
             elif comprobar_sucursal[0] == nom_suc and comprobar_sucursal[1] == 1:
                 respuesta = self.d.consultarSucursal(nom_suc)
                 print(f"---- Datos sucursal ----\n")
@@ -587,11 +587,16 @@ class Funciones():
                 print(f"2. Dirección: {respuesta[1]}")
                 print(f"3. Fecha constitución: {respuesta[2]}\n")
 
-                op = validadores.validaInt("¿Está seguro de que desea eliminar esta sucursal? Esta operación no se puede deshacer. 1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
+                op = validadores.validaInt("¿Está seguro de que desea eliminar esta sucursal? Esta operación no se puede deshacer.\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
                 if op == 1:
                     self.sucursal.setEstado(0)
                     self.sucursal.setNombre(nom_suc)
+                    # conseguir id sucursal (antes de eliminarla)
+                    id_suc = self.d.consultarIdSucursal(nom_suc)
                     self.d.modificarEstadoSucursal(self.sucursal)
+                    # conseguir el id de todas las asignaciones que coinciden con esta sucursal
+                    # cambiar esas asignaciones a estado = 0
+                    self.d.deshabilitarAsginacionPorSucursal(id_suc)
                     print("Sucursal eliminada exitosamente.\n")
                 elif op == 2:
                     print("La eliminación fue cancelada.\n")
@@ -658,7 +663,7 @@ class Funciones():
                         consola.pausa()
                         return self.menuAsignaciones()
                     # Ya existe una asignación, pero estado sucursal = deshabilitado
-                    elif comprobar_asignacion[0] == 0 and comprobar_asignacion[5] == 0:
+                    elif comprobar_asignacion[0] == 0 and comprobar_asignacion[4] == 0:
                         op = validadores.validaInt(f"El cliente poseía una asignación anteriormente, pero su sucursal fue eliminada. ¿Desea asignar nueva sucursal al cliente?\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
                         if op == 1:
                             print("Se le solicitarán los datos para una nueva asignación")
@@ -668,7 +673,7 @@ class Funciones():
                             consola.pausa()
                             return self.menuAsignaciones()
                     # Ya existe una asignación, pero fue eliminada y la sucursal sigue habilitada
-                    elif comprobar_asignacion[0] == 0 and comprobar_asignacion[5] == 1:
+                    elif comprobar_asignacion[0] == 0 and comprobar_asignacion[4] == 1:
                         op = validadores.validaInt(f"El cliente poseía una asginación anteriormente en {comprobar_asignacion[4]}. ¿Desea reestablecerla?\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
                         if op == 1:
                             id_cli = comprobar_asignacion[1]
@@ -697,19 +702,29 @@ class Funciones():
             print("Error: El nombre de la sucursal no existe. Por favor, intente nuevamente.")
             consola.pausa()
             return self.menuAsignaciones()
-        else:
-            # Buscar id cliente por rut
-            respuesta_cli = self.d.consultarIdCliente(rut_sin_guion)
-            id_cli = respuesta_cli[0]
-            # Buscar id sucursal por nombre
-            respuesta_suc = self.d.consultarIdSucursal(nom_suc)
-            id_suc = respuesta_suc[0]
+        elif comprobar_sucursal is not None:
+            # el nuevo nombre de sucursal es una sucursal que ya existía, pero fue eliminada
+            if comprobar_sucursal[1] == 0:
+                print("Error: Esta sucursal ya fue eliminada de la base de datos. Por favor, intente nuevamente.\n")
+                consola.pausa()
+                return self.menuAsignaciones()
+            else:
+                # Buscar id cliente por rut
+                respuesta_cli = self.d.consultarIdCliente(rut_sin_guion)
+                id_cli = respuesta_cli[0]
+                # Buscar id sucursal por nombre
+                respuesta_suc = self.d.consultarIdSucursal(nom_suc)
+                id_suc = respuesta_suc[0]
 
-            # Crear asignación 
-            self.cliente_sucursal.cliente.setId(id_cli)
-            self.cliente_sucursal.sucursal.setId(id_suc)
-            self.cliente_sucursal.setEstadoAsignacion(1)
-            self.d.asignarCliente(self.cliente_sucursal)
+                # Crear asignación 
+                self.cliente_sucursal.cliente.setId(id_cli)
+                self.cliente_sucursal.sucursal.setId(id_suc)
+                self.cliente_sucursal.setEstadoAsignacion(1)
+                self.d.asignarCliente(self.cliente_sucursal)
+                return self.menuAsignaciones()
+        else:
+            print("Error: Ocurrió un error inesperado. Por favor, intente nuevamente.\n")
+            consola.pausa()
             return self.menuAsignaciones()
 
     def verAsignaciones(self):

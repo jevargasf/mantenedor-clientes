@@ -352,6 +352,17 @@ class DAO():
         except:
             print("Error en DAO: Error al eliminar la asignación de cliente a sucursal.")
 
+    def deshabilitarAsginacionPorSucursal(self, id_suc):
+        try:
+            sql = "update nub set est_asi = 0 where id_suc = %s and est_asi = 1"
+            self.__conectar()
+            self.cursor.execute(sql, id_suc)
+            self.connection.commit()
+            self.__desconectar()
+            print("Asignación eliminada exitosamente.")
+        except:
+            print("Error en DAO: Error al eliminar las asignaciones relacionadas con sucursal.")
+
     def reestablecerAsginacion(self, id_cli):
         try:
             sql = "update nub set est_asi = 1 where id_cli = %s and est_asi = 0"
