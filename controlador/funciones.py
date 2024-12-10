@@ -9,6 +9,7 @@ import controlador.validadores as validadores
 import controlador.consola as consola
 import controlador.api as api
 from beautifultable import BeautifulTable
+from clases.auth import fernet
 
 class Funciones():
     cliente = Cliente()
@@ -98,8 +99,21 @@ class Funciones():
             self.menuComercial()
 
     def menuUsuarios(self):
-        pass
+        op = validadores.validaInt("¿Qué desea hacer?\n1. Registrar usuario\n2. Ver usuarios\n3. Buscar usuario\n4. Modificar usuario\n5. Eliminar usuario\n6. Volver\n", 1, 6, "Error: Ingrese una de las opciones válidas.", "Error: Ingrese una opción válida.")
 
+        if op == 1:
+            self.registrarUsuario()
+        elif op == 2:
+            self.verUsuarios()
+        elif op == 3:
+            self.buscarUsuario()
+        elif op == 4:
+            self.modificarUsuario()
+        elif op == 5:
+            self.eliminarUsuario()
+        elif op == 6:
+            self.menuAdmin()
+    
     def salir(self):
         pass
 
@@ -149,10 +163,72 @@ class Funciones():
         consola.pausa()
         self.menuInicio()
 
+# Administración de usuarios
+    def registrarUsuario(self):
+        # ingrese rut
+        try:
+            rut = input("Ingrese RUT del nuevo usuario con puntos y guión. Ej: 11.111.111-1:\n")
+            if validaRut.valida(rut) == True:
+                if rut.find(".") != -1:
+                    rut_sin_puntos = rut.replace(".", "")
+                    rut_sin_guion = rut_sin_puntos.replace("-", "")
+            else:
+                print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
+                consola.pausa()
+                return self.menuClientes()
+        except:
+            print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
+            consola.pausa()
+
+        comprobar_usuario = self.d.comprobarUsuario(rut_sin_guion)
+        # comprobar si ya está registrado
+        if comprobar_usuario is not None:
+            # comprobar si está habilitado
+            if comprobar_usuario[1] == 1:
+                print("Error: El RUT ingresado ya está registrado en el sistema. Por favor, intente con otro RUT.")
+                consola.pausa()
+                return self.menuUsuarios()
+            elif comprobar_usuario[1] == 0:
+                # ¿Desea reestablecer el usuario?
+                pass
+            else:
+                print("Error: Ocurrió un error inesperado. Por favor, intente nuevamente.")
+                consola.pausa()
+                return self.menuUsuarios()
+        elif comprobar_usuario is None:
+            # continuar registrando el usuario
+            # ingrese contraseña
+            con = validadores.validaContraseña("Ingrese contraseña. Debe tener mínimo 8 caracteres alfanuméricos:\n", 8, 50, "Error: La contraseña debe tener entre 8 y 50 caracteres.\n", "Error: Ingrese una contraseña válida.\n")
+            con_encriptada = fernet.crearContraseña(con)
+
+            # elegir perfil 1. administrador, 2. comercial
+            op = validadores.validaInt("Ingrese el tipo de perfil para este usuario:\n1. Administrador\n2. Comercial\n", 1, 2, "Error de rango: Ingrese una de las opciones válidas.", "Error: Ingrese un valor numérico.")
+            self.usuario.setNombreUsuario(rut_sin_guion)
+            self.usuario.setContraseña(con_encriptada)
+            self.usuario.perfil.setId(op)
+            # set estado = 1
+            self.usuario.setEstado(1)
+            # llamar consulta DAO
+            self.d.agregarUsuario(self.usuario)
+            consola.pausa()
+            return self.menuUsuarios()
+        
+    def verUsuarios(self):
+        pass
+
+    def buscarUsuario(self):
+        pass
+
+    def modificarUsuario(self):
+        pass
+
+    def eliminarUsuario(self):
+        pass
+
 # Administración de clientes
     def registrarCliente(self):
         try:
-            rut = input("Ingrese su RUT con puntos y guión. Ej: 11.111.111-1:\n")
+            rut = input("Ingrese RUT del cliente con puntos y guión. Ej: 11.111.111-1:\n")
             if validaRut.valida(rut) == True:
                 if rut.find(".") != -1:
                     rut_sin_puntos = rut.replace(".", "")

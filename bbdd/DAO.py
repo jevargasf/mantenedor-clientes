@@ -375,4 +375,42 @@ class DAO():
             print("Error en DAO: Error al eliminar la asignación de cliente a sucursal.")
 
 # CRUD usuarios
-    # acá las funciones de (al menos) agregar usuario
+    def agregarUsuario(self, usu: Usuario):
+        try:
+            sql = "insert into usuarios(nom_usu, con_usu, id_per, est_usu) values(%s,%s,%s,%s)"
+            valores = (usu.getNombreUsuario(), usu.getContraseña(), usu.perfil.getId(), usu.getEstado())
+            self.__conectar()
+            self.cursor.execute(sql, valores)
+            self.connection.commit()
+            self.__desconectar()
+            print("Usuario agregado exitosamente.")
+        except:
+            print("Error en DAO: Error al agregar nuevo usuario.\n")
+            consola.pausa()
+
+    def listarUsuarios(self):
+        pass
+
+    def comprobarUsuario(self, rut):
+        try:
+            sql = "select nom_usu, est_usu from usuarios where nom_usu=%s"
+            self.__conectar()
+            self.cursor.execute(sql, rut)
+            response = self.cursor.fetchone()
+            self.__desconectar()
+            return response
+        except:
+            print("Error en DAO: Error al comprobar RUT del usuario.")
+            consola.pausa()
+
+    def consultarIdUsuario(self, rut):
+        pass
+
+    def editarUsuario(self, usu: Usuario):
+        pass
+
+    def modificarEstadoUsuario(self, rut):
+        pass
+
+    def reestablecerUsuario(self, rut):
+        pass

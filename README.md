@@ -34,12 +34,11 @@
 
 P4:
 - CRUD de usuarios, perfil administrador
-	- Agregar usuario con contraseña encriptada*
+	✓ Agregar usuario con contraseña encriptada*
 	- Listar usuarios
 	- Modificar usuario
 	- Dar de baja usuario
-	- No es necesario agregar otro perfil adicional, con los dos perfiles que existen es suficiente.
-- Escribir pruebas unitarias automatizadas
+	✓ No es necesario agregar otro perfil adicional, con los dos perfiles que existen es suficiente.
 
 - Debug antes de entregar:
 	✓ revisar si todas las funciones donde pide el RUT se quiebran cuando se ingresa un rut no
@@ -123,5 +122,12 @@ Pruebas:
 		✓ Pedir modificar asginación eliminada	
 	JSON:
 		- mejorar la impresión usando tabla
+	Usuarios:
+		✓ Crear nuevo usuario e iniciar sesión
+		- Equivocarse al crear nuevo usuario
+		- Ver usuarios
+		- Buscar
+		- Modificar
+		- Eliminar
 		
 		
