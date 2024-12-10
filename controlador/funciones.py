@@ -475,7 +475,7 @@ class Funciones():
         
         comprobar_asignacion = self.d.comprobarAsignacion(id_cli)
         if comprobar_asignacion is None or len(comprobar_asignacion) == 0:            
-            op = validadores.validaInt("¿Está seguro de que desea eliminar este cliente? Esta operación no se puede deshacer. 1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
+            op = validadores.validaInt("¿Está seguro de que desea eliminar este cliente? Esta operación no se puede deshacer.\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
             if op == 1:
                 # cambiar estado asignación también
                 self.cliente.setEstado(0)
@@ -510,7 +510,7 @@ class Funciones():
                 return self.menuSucursales()
             # elif el nombre de la sucursal ya existe, pero estado = 0, ¿desea volver a habilitarla?
             elif comprobar_sucursal[0] == nom_suc and comprobar_sucursal[1] == 0:
-                op = validadores.validaInt("La sucursal fue eliminada de la base de datos anteriormente. ¿Desea reestablecer el registro de la sucursal? 1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
+                op = validadores.validaInt("La sucursal fue eliminada de la base de datos anteriormente. ¿Desea reestablecer el registro de la sucursal?\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
                 if op == 1:
                     # cambiar estado
                     self.sucursal.setEstado(1)
@@ -752,7 +752,7 @@ class Funciones():
                             return self.menuAsignaciones()
                     # Ya existe una asignación, pero fue eliminada y la sucursal sigue habilitada
                     elif comprobar_asignacion[0] == 0 and comprobar_asignacion[4] == 1:
-                        op = validadores.validaInt(f"El cliente poseía una asginación anteriormente en {comprobar_asignacion[4]}. ¿Desea reestablecerla?\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
+                        op = validadores.validaInt(f"El cliente poseía una asginación anteriormente en {comprobar_asignacion[3]}. ¿Desea reestablecerla?\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
                         if op == 1:
                             id_cli = comprobar_asignacion[1]
                             self.d.reestablecerAsginacion(id_cli)
@@ -894,13 +894,13 @@ class Funciones():
                                 return self.menuAsignaciones()
                         # Ya existe una asignación, pero estado sucursal = deshabilitado
                         # esto no debería pasar porque toda sucursal deshabilitada también deshabilita su asignación
-                        elif comprobar_asignacion[0] == 0 and comprobar_asignacion[5] == 0:
+                        elif comprobar_asignacion[0] == 0 and comprobar_asignacion[4] == 0:
                             print("Error: El cliente poseía una asignación anteriormente, pero su sucursal fue eliminada. Intente creando una nueva asignación.")
                             consola.pausa()
                             return self.menuAsignaciones()
                         # Ya existe una asignación, pero fue eliminada y la sucursal sigue habilitada
-                        elif comprobar_asignacion[0] == 0 and comprobar_asignacion[5] == 1:
-                            op = validadores.validaInt(f"El cliente poseía una asginación anteriormente en {comprobar_asignacion[4]}. ¿Desea reestablecerla?\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
+                        elif comprobar_asignacion[0] == 0 and comprobar_asignacion[4] == 1:
+                            op = validadores.validaInt(f"El cliente poseía una asginación anteriormente en {comprobar_asignacion[3]}. ¿Desea reestablecerla?\n1. Sí\n2. No\n", 1, 2, "Error: Fuera de rango. Ingrese una de las opciones disponibles.\n", "Error: Fuera de tipo. Ingrese un valor numérico.\n")
                             if op == 1:
                                 id_cli = comprobar_asignacion[1]
                                 self.d.reestablecerAsginacion(id_cli)
