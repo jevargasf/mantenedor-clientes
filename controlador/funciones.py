@@ -120,7 +120,7 @@ class Funciones():
                 return self.menuInicio()
         except:
                 print("El RUT ingresado no es válido. Por favor, intente nuevamente.\n")
-                self.menuInicio()
+                consola.pausa()
 
         # pedir contraseña (enmascarar)
         contraseña = validadores.validaContraseña("Ingrese contraseña:\n", 1, 10, "Error: La contraseña debe tener entre 1 y 10 caracteres.", "Error: Por favor, ingrese una contraseña válida.")
@@ -131,13 +131,17 @@ class Funciones():
         if respuesta is None:
             print("Error: RUT y/o la contraseña incorrectos. Intente nuevamente.\n")
             consola.pausa()
-            self.menuInicio()
-        
-        self.usuario.perfil.setNomPerfil(respuesta[3])
-        if respuesta[2] == 1:
-            self.menuAdmin()
-        elif respuesta[2] == 2:
-            self.menuComercial()
+            return self.menuInicio()
+        elif respuesta is not None:
+            self.usuario.perfil.setNomPerfil(respuesta[3])
+            if respuesta[2] == 1:
+                return self.menuAdmin()
+            elif respuesta[2] == 2:
+                return self.menuComercial()
+        else:
+            print("Error: Ocurrió un error inesperado. Por favor, intente nuevamente.")
+            consola.pausa()
+            return self.menuInicio()
 
         
     def cerrarSesion(self):

@@ -42,7 +42,7 @@ P4:
 - Escribir pruebas unitarias automatizadas
 
 - Debug antes de entregar:
-	- revisar si todas las funciones donde pide el RUT se quiebran cuando se ingresa un rut no
+	✓ revisar si todas las funciones donde pide el RUT se quiebran cuando se ingresa un rut no
 	válido (si no continúa la ejecución de la función con un rut vacío)
 	- revisar si el programa corre en un nuevo entorno y con una bbdd nueva desde cero
 	- se puede mejorar el programa almacenando todos los string como mayúsculas y comparando
@@ -55,11 +55,11 @@ P4:
 	se puede mejorar dando la posibilidad de salir con algún comando. De hecho, cuando
 	ejecuto con F5, el programa se puede interrumpir, pero si ejecuto directamente desde
 	la consola, el programa no es posible interrumpirlo ya que no escribí esa funcionalidad
-	- algo que mejorar, es que cuando se elimine una sucursal, también se eliminen sus
+	✓ algo que mejorar, es que cuando se elimine una sucursal, también se eliminen sus
 	asignaciones, si es que la sucursal está involucrada en una
-	- otra cosa que mejorar, es que cuando se elimine un cliente, también se elimine
+	✓ otra cosa que mejorar, es que cuando se elimine un cliente, también se elimine
 	su asignación
-	- y si le vuelvo a asignar una sucursal a un cliente y repongo la sucursal eliminada,
+	✓ y si le vuelvo a asignar una sucursal a un cliente y repongo la sucursal eliminada,
 	¿se repone la asignación? No debería. Toda sucursal eliminada pasa a tener asignación
 	eliminada. Si la persona quiere reponer la asignación, debe hacerlo manualmente.
 
@@ -119,8 +119,8 @@ Pruebas:
 		que sea una sucursal existente
 		
 		
-		- Pedir agregar asginación eliminada
-		- Pedir modificar asginación eliminada	
+		✓ Pedir agregar asginación eliminada
+		✓ Pedir modificar asginación eliminada	
 	JSON:
 		- mejorar la impresión usando tabla
 		
